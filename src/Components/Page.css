@@ -1,0 +1,243 @@
+.customer-id {
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 1em;
+    margin-bottom: 15px;
+}
+
+.company-name {
+    font-size: 1rem;
+    font-weight: 900;
+    margin-bottom: 5px;
+}
+
+.text-default {
+    font-size: 0.625rem;
+    margin-bottom: 5px;
+    min-height: 1em;
+}
+
+.text-link {
+    text-decoration: none;
+    color: blue;
+}
+
+.row {
+    align-items: center;
+}
+
+.input-caption {
+    font-weight: 700;
+    font-size: 0.625rem;
+}
+
+.form-item {
+    padding: 10px;
+}
+
+input {
+    border-radius: 5px;
+}
+
+.date-picker {
+    background-color: #F6F2F6;
+    height: 20px;
+}
+
+.ship-to {
+    width: 100%;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: #F6F2F6;
+    float: left;
+    padding: 10px;
+}
+
+.bill-to {
+    width: 100%;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: #F6F2F6;
+    float: left;
+    padding: 10px;
+}
+
+.review-order{
+    cursor: default;
+}
+
+.complete-order {
+    cursor: default;
+}
+
+.clear-entire-order {
+    cursor: default;
+}
+
+.save-comments {
+    cursor: default;
+}
+
+.make-new-order {
+    cursor: default;
+}
+
+table {
+    cursor: default;
+}
+
+.selected-row {
+    background-color: #CCCCCC !important;
+}
+
+.quanted-row {
+    background-color: #FBF9AF !important;
+}
+
+.order-table{
+    display: block;
+    height: 400px;
+    overflow-y: scroll;
+    border: 2px solid #C2808C;
+}
+.order-table tr td {
+    border-right: 1.5px solid #CCCCCC;
+}
+
+.order-table tr td:last-of-type {
+    border-right:none;
+}
+
+.order-table th {
+    border-right: 1.5px solid #C2808C;
+    border-bottom: 1.5px solid #C2808C;
+    background: -webkit-linear-gradient(-90deg,  rgba(255,205,100,1) 0%,rgba(252,182,83,1) 50%, rgba(249,159,67,1) 100%);
+}
+
+.order-table tr:nth-child(odd) {
+    background: #F6F2F6;
+}
+
+.order-table th:last-of-type {
+    border-right:none;
+    border-bottom: 1.5px solid #C2808C;
+}
+
+/* customized dropdown */
+
+.Dropdown-root {
+    width: 45%;
+    display: inline-grid;
+}
+
+.Dropdown-placeholder,.Dropdown-option {
+    color: white !important;
+}
+
+.Dropdown-control {
+    background-color: #354960 !important;
+    padding-right: 10px !important;
+    overflow-x: hidden;
+}
+
+.Dropdown-menu {
+    background-color: #354960 !important;
+    border-radius: 5px;
+}
+
+/* shape menu like a comment */
+.Dropdown-menu {
+    /*margin-top: 26px !important;*/
+    margin-top: 5px;
+    background: #354960  !important;
+    border-radius: 5px  !important;
+}
+
+.Dropdown-menu::-webkit-scrollbar {
+    width: 5px !important;
+}
+
+.Dropdown-menu::-webkit-scrollbar-track {
+    background-color: #354960;
+}
+
+.Dropdown-menu::-webkit-scrollbar-thumb {
+    background-color: #555555;
+}
+
+.Dropwdown-menu:before {
+    content: '';
+    /*margin: none;
+    content: ""  !important;
+    position: absolute  !important;
+    right: -60%  !important;
+    top: -50%  !important;
+    width: 0  !important;
+    height: 0  !important;
+    border-right: 13px solid transparent  !important;
+    border-bottom: 26px solid #354960  !important;
+    border-left: 13px solid transparent  !important;*/
+}
+
+.Dropdown-option {
+    font-size: 0.5rem;
+}
+
+.Dropdown-option .Dropdown-option:hover {
+    background-color: #354960 !important;
+}
+
+.Dropdown-option.is-selected{
+    background-color: #18BEA0 !important;
+}
+
+.Dropdown-control {
+    font-size: 0.5rem;
+    height: 3em !important;
+    border-radius: 5px !important;
+    justify-content: center;
+}
+
+.Dropdown-arrow {
+    display: none !important;
+}
+
+
+/*--------------------------- Order Page ----------------------------*/
+
+.sub-header {
+    font-size: 0.5rem;
+    font-weight: 700;
+    background-color: #E4E1E4;
+    margin: -20px;
+    text-align: center;
+}
+
+.sub-header-tab {
+    vertical-align: middle;
+    height: 100%;
+    border-bottom: #E4E1E4 2px solid;
+}
+
+.sub-header-tab:hover {
+    cursor: default;
+}
+
+.sub-header-tab-active {
+    cursor: default;
+    line-height: 4em;
+    vertical-align: middle;
+    height: 100%;
+    border-bottom: lightblue 2px solid;
+}
+
+.show-statement{
+    cursor: default;
+    background-color: #F4F1F4;
+}
+.show-statement:hover {
+    background-color: #F4F1F4;
+}
+.show-statement:active {
+    background-color: #E4E1E4;
+}

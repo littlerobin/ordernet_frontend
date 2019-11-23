@@ -1,0 +1,45 @@
+.tab-header {
+    margin: 10px;
+    padding-bottom: 1px;
+}
+
+.tab-header :hover {
+    cursor: default;
+}
+
+.tab-header-button {
+    background-color: #E4E1E4;
+    margin-right: 3px;
+    padding: 10px;
+
+    font-size: 0.5rem;
+    font-weight: 700;
+    stroke: none;
+
+    border-bottom: #E4E1E4 2px solid;
+}
+
+.header-app-title {
+    color: blue;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.header-app-version {
+    color: blue;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.active {
+    border-bottom: lightblue 2px solid;
+}
+
+a, a:visited, a:hover, a:active {
+    color: inherit;
+    text-decoration: none;
+}
+
+.float-right {
+    float: right;
+}

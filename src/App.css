@@ -1,0 +1,17 @@
+.app {
+    margin: auto;
+    width: 100%;
+    max-width: 1024px;
+}
+
+.page {
+    padding: 20px;
+    margin: 10px;
+    min-height: 350px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-top: #E4E1E4 5px solid;
+}
+
+.text-center {
+    text-align: center;
+}
