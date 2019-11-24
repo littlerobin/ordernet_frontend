@@ -34,12 +34,12 @@ class LoginCompanyPage extends React.Component {
         const { passed, failed } = this.state;
         
         if (key === true || passed === true) 
-            return <Redirect to="/logincusomterpage"/>
+            return <Redirect to="/logincustomer"/>
 
-        return (<div style={{textAlign: 'center', marginTop: '30%', height: '40%'}}>
+        return (<div style={{textAlign: 'center', marginTop: '30%', height: '40%', maxWidth: '300px', marginLeft: 'auto', marginRight: 'auto'}}>
             <div style={{color: 'blue', fontSize: '1.5rem', fontWeight: 700}}>OrderNet</div>
             <div style={{marginBottom: 5}}>Please enter the company name below</div>
-            <input style={{marginBottom: 5, width: "25em"}} type="text" placeholder="Enter Company Name Here" onChange={e => this.onInputChange(e)}/>
+            <input style={{marginBottom: 5, width: "100%"}} type="text" placeholder="Enter Company Name Here" onChange={e => this.onInputChange(e)}/>
             <br/>
             {
                 failed === false ? (<div></div>) : (<div style={{color: 'red'}}>

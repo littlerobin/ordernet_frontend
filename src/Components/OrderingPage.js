@@ -155,15 +155,13 @@ class OrderingPage extends React.Component {
     onSelectedRowChanged = (newSelectedItem) => {
         let { quantum, curSelectedItem, currentQuantum } = this.state;
 
-        console.log(quantum);
-
         if (curSelectedItem !== null && curSelectedItem.item === newSelectedItem.item) {
             quantum[curSelectedItem.item] = parseInt(currentQuantum);
             this.setState({quantum: quantum, currentQuantum: 0, curSelectedItem: null});
             return;
         }
 
-        if (curSelectedItem != null)
+        if (curSelectedItem !== null)
             quantum[curSelectedItem.item] = parseInt(currentQuantum);
 
         this.setState({curSelectedItem: newSelectedItem, quantum: quantum,
@@ -236,7 +234,6 @@ class OrderingPage extends React.Component {
         let { deliveryDate, orderID, customer, productcodes, quantum, filterCode,
             curSelectedItem, isReviewMode, custPONum, totalCost, totalItems, custComments } = this.state;
         let totalPrice = 0;
-        console.log(quantum);
         let curSelectedRow = null;
         if (curSelectedItem !== null)
             curSelectedRow = curSelectedItem.item;
@@ -325,7 +322,7 @@ class OrderingPage extends React.Component {
                         <tbody>
                             {
                                 products.map(product => {
-                                    if (quantum[product.item] != undefined && quantum[product.item] > 0)
+                                    if (quantum[product.item] !== undefined && quantum[product.item] > 0)
                                         totalPrice += quantum[product.item] * product.Price1;
                                     else if (isReviewMode === true || orderID !== "")
                                         return (<tr></tr>);
@@ -337,7 +334,7 @@ class OrderingPage extends React.Component {
                                                 product.item === curSelectedRow ? <input type="text" style={{width: '100%'}}
                                                     onChange={e => {e.preventDefault();e.stopPropagation(); this.onCurQuanChanged(e)}}/> : 
                                                     <div onClick={() => {this.onSelectedRowChanged(product)}}>
-                                                        {(quantum[product.item] != undefined && quantum[product.item] > 0) ? quantum[product.item] : 0}
+                                                        {(quantum[product.item] !== undefined && quantum[product.item] > 0) ? quantum[product.item] : 0}
                                                     </div>
                                             }
                                         </td>
@@ -345,7 +342,7 @@ class OrderingPage extends React.Component {
                                         <td onClick={() => {this.onSelectedRowChanged(product)}}>{product.Pack}</td>
                                         <td onClick={() => {this.onSelectedRowChanged(product)}}>{product.descrip}</td>
                                         <td onClick={() => {this.onSelectedRowChanged(product)}}>{parseFloat(product.Price1).toFixed(2)}</td>
-                                        <td onClick={() => {this.onSelectedRowChanged(product)}}>{(quantum[product.item] != undefined && quantum[product.item] > 0)
+                                        <td onClick={() => {this.onSelectedRowChanged(product)}}>{(quantum[product.item] !== undefined && quantum[product.item] > 0)
                                             ? (quantum[product.item] * product.Price1).toFixed(2) : 0}</td>
                                         <td onClick={() => {this.onSelectedRowChanged(product)}}>{product.item}</td>
                                         <td onClick={() => {this.onSelectedRowChanged(product)}}>{product.Category}</td>
