@@ -19,6 +19,7 @@ class OrderingPage extends React.Component {
         super(props);
 
         this.state = {
+            isLoading: true,
             username: cookie.get('ordernet_username'),
             password: cookie.get('ordernet_password'),
             customer: {},
@@ -106,7 +107,7 @@ class OrderingPage extends React.Component {
     }
 
     async initializeData() {
-        axios({
+        await axios({
             method: 'post',
             url: `${APIInfo.serverUrl}${APIInfo.apiContext}${APIInfo.version}${APIInfo.customer}`,
             data: {
@@ -135,8 +136,7 @@ class OrderingPage extends React.Component {
                 });
             })
 
-            let products = JSON.parse(JSON.stringify(data.products));
-            this.setState({customer: data.userinfo, orgProducts: products, productcodes: productcodes});
+            this.setState({customer: data.userinfo, orgProducts: data.products, productcodes: productcodes, isLoading: false});
         })
         .catch((err) => {
             console.log(err);
@@ -229,6 +229,12 @@ class OrderingPage extends React.Component {
     }
 
     render() {
+        if (this.state.isLoading === true) {
+            return (<div class="text-center" style={{marginTop: '30%'}}>
+                Loading data. Please wait....
+            </div>)
+        }
+
         let products = this.applySearchFilter();
         
         let { deliveryDate, orderID, customer, productcodes, quantum, filterCode,

@@ -11,6 +11,7 @@ class LoginCustomerPage extends React.Component {
         super(props);
 
         this.state = {
+            isLoading: false,
             username: '',
             password: '',
             customerNumber: '',
@@ -27,9 +28,10 @@ class LoginCustomerPage extends React.Component {
         this.setState({password: e.target.value, failed: false});
     }
 
-    onConfirm(){
+    async onConfirm(){
         const { username, password } = this.state;
-        axios({
+        this.setState({isLoading: true});
+        await axios({
             method: 'post',
             url: `${APIInfo.serverUrl}${APIInfo.apiContext}${APIInfo.version}${APIInfo.userInfo}`,
             data: {
@@ -41,7 +43,7 @@ class LoginCustomerPage extends React.Component {
             if (res.data.success === "1")
                 this.setState({passed: true, username: username, password: password, customerNumber: res.data.userinfo.custno});
             else
-                this.setState({failed: true});
+                this.setState({failed: true, isLoading: false});
         })
         .catch((err) => {
             console.log(err);
@@ -49,7 +51,7 @@ class LoginCustomerPage extends React.Component {
     }
 
     render() {
-        const { failed, passed } = this.state;
+        const { isLoading, failed, passed } = this.state;
 
         if (passed === true) {
             const { username, password, customerNumber } = this.state;
@@ -58,6 +60,7 @@ class LoginCustomerPage extends React.Component {
             cookie.set('ordernet_customerNumber', customerNumber);
             return <Redirect to="/ordering"/>;
         }
+
 
         return (<div style={{textAlign: 'center', marginTop: '30%', height: '40%', maxWidth: '300px', marginLeft: 'auto', marginRight: 'auto'}}>
             <div style={{color: 'blue', fontSize: '1.5rem', fontWeight: 700}}>OrderNet</div>
@@ -69,6 +72,9 @@ class LoginCustomerPage extends React.Component {
                 failed === false ? (<div></div>) : (<div style={{color: 'red'}}>
                     Incorrect Username or Password<br/>Please try again.
                 </div>)
+            }
+            {
+                isLoading === true ? (<div>Please wait...</div>) : (<div></div>)
             }
             <div className="show-statement" style={{marginBottom: 5, height: '3em', lineHeight: '3em', verticalAlign: 'middle',
                 width: '5em', backgroundColor: '#F4F1F4', margin: 'auto'}} onClick={() => {this.onConfirm()}}>Login</div>
