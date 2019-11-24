@@ -26,7 +26,10 @@ class OrderingPage extends React.Component {
             products: [],
             deliveryDate: new Date(),
             pickerOpen: false,
+
+            searchKey: '',
             isProfileItems: false,
+            filterCode: null,
 
             isReviewMode: false,
 
@@ -47,13 +50,16 @@ class OrderingPage extends React.Component {
         }
 
         this.initializeData = this.initializeData.bind(this);
+
+        this.initializeData();
+    }
+
+    onProductCodeChange = newCode => {
+        this.setState({filterCode: newCode.value});
     }
 
     onSearchKeyChange(searchKey) {
-        if (this.state.isReviewMode === true)
-            return;
-
-        let { isProfileItems, orgProducts } = this.state;
+        /*let { isProfileItems, orgProducts } = this.state;
         let products = [];
         orgProducts.forEach(function(orgOne) {
             if (isProfileItems !== true || orgOne.S === '*') {
@@ -61,18 +67,42 @@ class OrderingPage extends React.Component {
                     products.push(orgOne);
             }
         });
-        this.setState({products: products});
+        this.setState({products: products});*/
+        this.setState({searchKey: searchKey});
     }
 
     onChangeIsProfile() {
-        let { isProfileItems, orgProducts } = this.state;
+        /*let { isProfileItems, orgProducts } = this.state;
         isProfileItems = !isProfileItems;
         let products = [];
         orgProducts.forEach(function(orgOne) {
             if (isProfileItems !== true || orgOne.S === '*')
                 products.push(orgOne);
         });
-        this.setState({products: products, isProfileItems: isProfileItems});
+        this.setState({products: products, isProfileItems: isProfileItems});*/
+        this.setState({isProfileItems: !this.state.isProfileItems});
+    }
+
+    applySearchFilter() {
+        let { orgProducts, filterCode, searchKey, isProfileItems, isReviewMode } = this.state;
+        let products = [];
+
+        if (filterCode !== null) {
+            filterCode = JSON.parse(filterCode);
+            filterCode.TBLCHAR = filterCode.TBLCHAR.trim();
+            filterCode.TBLDESC = filterCode.TBLDESC.trim();
+        }
+
+        orgProducts.forEach(function(orgOne){
+            if (filterCode !== null && !(orgOne.Category.toUpperCase().match(filterCode.TBLCHAR.toUpperCase())
+                && orgOne.descrip.toUpperCase().match(filterCode.TBLDESC.toUpperCase()))){}
+            else if (isProfileItems === true && orgOne.S === '*'){}
+            else if (!(orgOne.item.toUpperCase().match(searchKey.toUpperCase()) || orgOne.descrip.toUpperCase().match(searchKey.toUpperCase()))){}
+            else
+                products.push(orgOne);
+        });
+
+        return products;
     }
 
     async initializeData() {
@@ -91,27 +121,29 @@ class OrderingPage extends React.Component {
             let codes = data.productcodes, productcodes = [];
             
             productcodes.push({
-                key: '',
+                key: null,
+                value: null,
                 value: 'ALL PRODUCTS',
             })
 
             codes.forEach(function(code) {
                 productcodes.push({
-                    key: code.TBLDESC + code.TBLCHAR,
-                    value: code.TBLDESC + code.TBLCHAR,
+                    /*key: code.TBLDESC + code.TBLCHAR,
+                    value: code.TBLDESC + code.TBLCHAR,*/
+                    label: code.TBLDESC + code.TBLCHAR,
+                    value: JSON.stringify(code),
                 });
             })
 
             let products = JSON.parse(JSON.stringify(data.products));
-            this.setState({customer: data.userinfo, orgProducts: products, products:products, productcodes: productcodes});
+            this.setState({customer: data.userinfo, orgProducts: products, productcodes: productcodes});
         })
         .catch((err) => {
             console.log(err);
         });
     }
 
-    async componentDidMount() {
-        await this.initializeData();
+    componentDidMount() {
     }
 
     handleDevelieryDateChanged = date => {
@@ -199,7 +231,9 @@ class OrderingPage extends React.Component {
     }
 
     render() {
-        let { deliveryDate, orderID, customer, products, productcodes, quantum, 
+        let products = this.applySearchFilter();
+        
+        let { deliveryDate, orderID, customer, productcodes, quantum, filterCode,
             curSelectedItem, isReviewMode, custPONum, totalCost, totalItems, custComments } = this.state;
         let totalPrice = 0;
         console.log(quantum);
@@ -271,7 +305,8 @@ class OrderingPage extends React.Component {
                             />
                             <img src="../assets/calendar.png" style={{marginRight: '10px', width:20, height:20}} onClick={() => {this.deliveryDateRef.setOpen(true);}}/>
                         </div>
-                        <Dropdown options={productcodes} placeholder = 'ALL PRODUCTS' style={{marginBottom: '5px'}}/>
+                        <Dropdown onChange={newVal => this.onProductCodeChange(newVal)} 
+                            value={filterCode} options={productcodes} placeholder = 'ALL PRODUCTS' style={{marginBottom: '5px'}}/>
                     </div>
                     <table className="order-table table table-bordered table-condensed table-striped table-hover">
                         <thead>
@@ -332,13 +367,13 @@ class OrderingPage extends React.Component {
                                         PROFILE ITEMS
                                     </label>
                                 </div>
-                                <div class="review-order" style={{display: 'block', marginTop: 15}} onClick={() => {this.setState({isReviewMode: !isReviewMode})}}>
+                                <div className="review-order" style={{display: 'block', marginTop: 15}} onClick={() => {this.setState({isReviewMode: !isReviewMode})}}>
                                     { isReviewMode === false ? 'Review Order' : 'Continue Review'}
                                 </div>
-                                <div class="complete-order" style={{display: 'block', color: 'red', marginTop: 15}} onClick={() => {this.completeOrder()}}>
+                                <div className="complete-order" style={{display: 'block', color: 'red', marginTop: 15}} onClick={() => {this.completeOrder()}}>
                                     Complete Order
                                 </div>
-                                <div class="clear-entire-order" style={{display: 'block', color: 'red', marginTop: 15}} onClick={() => {this.clearEntireOrder()}}>
+                                <div className="clear-entire-order" style={{display: 'block', color: 'red', marginTop: 15}} onClick={() => {this.clearEntireOrder()}}>
                                     Clear Entire Order
                                 </div>
                             </div>
@@ -347,7 +382,7 @@ class OrderingPage extends React.Component {
                                 <textarea style={{display: 'block', width: '100%', height: '10em', resize: 'none', backgroundColor: '#F4F1F4', borderRadius: 5}}
                                     onChange={e => {this.commentChanged(e)}} onClick={() => {this.setState({isCommentEditing: true})}}/>
                                 <div style={{display: this.state.isCommentEditing === true ? 'block' : 'none'}}
-                                    class="save-comments" onClick={() => {this.setState({isCommentEditing: false})}}>
+                                    className="save-comments" onClick={() => {this.setState({isCommentEditing: false})}}>
                                     SAVE COMMENTS
                                 </div>
                             </div>
@@ -363,20 +398,20 @@ class OrderingPage extends React.Component {
                                     </div>)
                                 }
                             </div>
-                        </div>) : (<div class="row" style={{textAlign: 'center'}}>
-                            <div class="col-md-4">
+                        </div>) : (<div className="row" style={{textAlign: 'center'}}>
+                            <div className="col-md-4">
                                 <div style={{border: '1px solid black', borderRadius: 5}}>
                                     TOTAL ITEMS<br/>
                                     {totalItems}
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div className="col-md-4">
                                 <div style={{border: '1px solid black', borderRadius: 5}}>
                                     TOTAL PRICE<br/>
                                     {totalCost.toFixed(2)}
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div className="col-md-4">
                                 <div style={{border: '1px solid black', borderRadius: 5, padding: 5}}>
                                     COMMENTS<br/>
                                     <div style={{height: '3em', border: '1px solid black', width: '80%', margin: 'auto'}}>
@@ -384,7 +419,7 @@ class OrderingPage extends React.Component {
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 make-new-order" style={{marginTop: 15}}>
+                            <div className="col-md-12 make-new-order" style={{marginTop: 15}}>
                                 <div style={{borderRadius: 5, height: '2em', border: '1px solid gray', width: '60%', margin: 'auto',
                                     backgroundColor: '#F4F1F4', textAlign: 'center'}}
                                     onClick={() => {this.setState({

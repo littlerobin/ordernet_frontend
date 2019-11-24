@@ -70,7 +70,7 @@ class LoginCustomerPage extends React.Component {
                     Incorrect Username or Password<br/>Please try again.
                 </div>)
             }
-            <div class="show-statement" style={{marginBottom: 5, height: '3em', lineHeight: '3em', verticalAlign: 'middle',
+            <div className="show-statement" style={{marginBottom: 5, height: '3em', lineHeight: '3em', verticalAlign: 'middle',
                 width: '5em', backgroundColor: '#F4F1F4', margin: 'auto'}} onClick={() => {this.onConfirm()}}>Login</div>
             <br/>
             <label>

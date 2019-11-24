@@ -46,7 +46,7 @@ class LoginCompanyPage extends React.Component {
                     Unable to retrieve data from server.<br/>Please make sure that you have entered a correct company name.
                 </div>)
             }
-            <div class="show-statement" style={{marginBottom: 5, height: '3em', lineHeight: '3em', verticalAlign: 'middle',
+            <div className="show-statement" style={{marginBottom: 5, height: '3em', lineHeight: '3em', verticalAlign: 'middle',
                 width: '5em', backgroundColor: '#F4F1F4', margin: 'auto'}} onClick={() => {this.onConfirm()}}>SAVE</div>
             <br/>
             <label>
