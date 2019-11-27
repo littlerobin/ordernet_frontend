@@ -21,7 +21,7 @@
     "build": "npm run remove:www && react-scripts build",
     "build:cordova": "npm run remove:www && react-scripts build && node __script.js && move build www",
     "eject": "npm run remove:www && react-scripts eject",
-    "remove:www": "if exist www rd /s /q www"
+    "remove:www": "rm -rf www"
   },
   "eslintConfig": {
     "extends": "react-app"
