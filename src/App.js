@@ -1,16 +1,16 @@
 import React from 'react';
-import { HashRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
 import './App.css';
-import ls from 'local-storage';
+import APIInfo from './Constants/API';
 
 import { AccountPage, ContactUsPage, OrderingPage, ReportsPage } from './Components';
-import { Header, LoginCompanyPage, LoginCustomerPage, SplashPage } from './Layout';
+import { LoginCompanyPage, LoginCustomerPage, SplashPage } from './Layout';
 
 function App() {
   return (
     <div className="app">
-      <HashRouter>
+      <BrowserRouter basename={APIInfo.baseUrl}>
         <Switch>
           <Route exact path="/" component={SplashPage}/>
           <Route exact path="/logincompany" component={LoginCompanyPage}/>
@@ -20,7 +20,7 @@ function App() {
           <Route path = "/reports" component = {ReportsPage}/>
           <Route path = "/contactus" component = {ContactUsPage}/>
         </Switch>
-      </HashRouter>
+      </BrowserRouter>
     </div>)
 }
 

@@ -22,7 +22,7 @@ class SplashPage extends React.Component {
         const { redirect } = this.state;
 
         return redirect === false ? (<div>
-            <img src="../assets/logo.png" style={{marginLeft: '15%', marginTop: '5%', width: '70%'}}/>
+            <img src="assets/logo.png" style={{marginLeft: '15%', marginTop: '5%', width: '70%'}}/>
         </div>) : (ls.get('passed_company') === true ? <Redirect to="/logincustomer"/> : <Redirect to="/logincompany"/>)
     }
 }

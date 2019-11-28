@@ -16,12 +16,14 @@
     "react-scripts": "3.1.1",
     "reactstrap": "^8.1.1"
   },
+  "homepage": "/ordernet/",
   "scripts": {
     "start": "npm run remove:www && react-scripts start",
     "build": "npm run remove:www && react-scripts build",
+    "build:debug": "react-scripts build",
     "build:cordova": "npm run remove:www && react-scripts build && node __script.js && move build www",
     "eject": "npm run remove:www && react-scripts eject",
-    "remove:www": "rm -rf www"
+    "remove:www": "if exist www rd /s /q www"
   },
   "eslintConfig": {
     "extends": "react-app"
