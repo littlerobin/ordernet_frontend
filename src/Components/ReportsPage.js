@@ -49,6 +49,8 @@ class ReportsPage extends React.Component {
             currentinvoice: null,
             invoices: null,
             currentinvno: "",
+
+            isloading: false,
         };
 
         this.getCatalog = this.getCatalog.bind(this);
@@ -79,6 +81,8 @@ class ReportsPage extends React.Component {
     }
 
     async getInvoices() {
+        this.setState({isloading: true});
+
         const { username, password, customerNumber } = this.state;
         await axios({
             method: 'post',
@@ -91,14 +95,17 @@ class ReportsPage extends React.Component {
         })
         .then((res) => {
             let { invoices, selectedinvoice } = res.data;
-            this.setState({invoices: invoices});
+            this.setState({invoices: invoices, isloading: false});
         })
         .catch((err) => {
             console.log(err);
+            this.setState({isloading: false});
         })        
     }
 
     async getCatalog() {
+        this.setState({isloading: true});
+
         const { username, password, customerNumber } = this.state;
         await axios({
             method: 'post',
@@ -110,14 +117,17 @@ class ReportsPage extends React.Component {
         })
         .then((res) => {
             let catalogs = res.data.catalogs;
-            this.setState({catalogs: catalogs});
+            this.setState({catalogs: catalogs, isloading: false});
         })
         .catch((err) => {
             console.log(err);
+            this.setState({isloading: false});
         })
     }
 
     async getStatement() {
+        this.setState({isloading: true});
+
         const { username, password, customerNumber, ageFrom, period1, period2, period3, period4 } = this.state;
         await axios({
             method: 'post',
@@ -135,14 +145,17 @@ class ReportsPage extends React.Component {
         })
         .then((res) => {
             let statement = res.data.statement;
-            this.setState({statement: statement});
+            this.setState({statement: statement, isloading: false});
         })
         .catch((err) => {
             console.log(err);
+            this.setState({isloading: false});
         })
     }
 
     async getDetailInvoice() {
+        this.setState({isloading: true});
+
         let detail = [], userinfo = {}
         const { username, password, customerNumber, fromDate, toDate } = this.state;
         await axios({
@@ -174,16 +187,17 @@ class ReportsPage extends React.Component {
         })
         .then((res) => {
             userinfo = res.data.userinfo;
-            //this.setState({userinfo: userinfo});
         })
         .catch((err) => {
             console.log(err)
         });
 
-        this.setState({userinfo: userinfo, detail: detail});
+        this.setState({userinfo: userinfo, detail: detail, isloading: false});
     }
 
     async getInvoiceSummary() {
+        this.setState({isloading: true});
+
         let summary = [], userinfo = {};
         const { username, password, customerNumber, fromSummary, toSummary } = this.state;
         await axios({
@@ -221,10 +235,12 @@ class ReportsPage extends React.Component {
             console.log(err)
         });
 
-        this.setState({userinfo: userinfo, summary: summary});
+        this.setState({userinfo: userinfo, summary: summary, isloading: false});
     }
 
     async getOneInvoice(currentinvno) {
+        this.setState({isloading: true});
+
         const { username, password, customerNumber } = this.state;
         
         await axios({
@@ -244,6 +260,8 @@ class ReportsPage extends React.Component {
         .catch((err) => {
             console.log(err);
         })
+
+        this.setState({isloading: false});
     }
 
     onCurrentInvoiceChange(newInvoiceNumber) {
@@ -264,7 +282,7 @@ class ReportsPage extends React.Component {
     }
 
     render() {
-        let { currentTab, catalogs, statement, detail, summary, userinfo, invoices, currentinvoice, currentinvno } = this.state;
+        let { isloading, currentTab, catalogs, statement, detail, summary, userinfo, invoices, currentinvoice, currentinvno } = this.state;
         const wholePage = this;
 
         function ViewInvoice() {
@@ -329,7 +347,7 @@ class ReportsPage extends React.Component {
                                     </div>
                                 </div>
                             </div>
-                            <table className="order-table table table-bordered table-condensed table-striped table-hover">
+                            <table className="order-table">
                                 <thead>
                                     <tr>
                                         <th style={{width: '10%'}}>Quantity</th>
@@ -443,7 +461,7 @@ class ReportsPage extends React.Component {
                 </div>
                 {
                     summary === null ? (<div></div>) : (<div>
-                        <table className="order-table table table-bordered table-condensed table-striped table-hover" style={{emptyCells: 'show'}}>
+                        <table className="order-table" style={{emptyCells: 'show'}}>
                             <thead>
                                 <tr>
                                     <th style={{width: '10%'}}>Invoice #</th>
@@ -560,7 +578,7 @@ class ReportsPage extends React.Component {
                                         <div style={{backgroundColor: 'lightgray'}}>
                                             Invoice No.{invoice.invoiceNumber} - Date:{invDate.getMonth() + 1, invDate.getDate(), invDate.getFullYear()}
                                         </div>
-                                        <table className="table table-bordered table-condensed table-striped table-hover" style={{width: '100%'}}>
+                                        <table className="order-table" style={{width: '100%'}}>
                                             <thead>
                                                 <tr style={{textAlign: 'left', backgroundColor: 'black', color: 'white'}}>
                                                     <th style={{padding: 5, border: '1px solid gray'}}>Item</th>
@@ -663,7 +681,7 @@ class ReportsPage extends React.Component {
                                 </div>
                             </div>
                         </div>
-                        <table className="order-table table table-bordered table-condensed table-striped table-hover">
+                        <table className="order-table">
                             <thead>
                                 <tr>
                                     <th style={{width: '40%'}}>Transaction Date</th>
@@ -779,7 +797,7 @@ class ReportsPage extends React.Component {
         return (
             <div>
                 <Header currentPage={2}/>
-                <div className="page" style={{fontSize: '0.5rem', borderTop: '2px solid #F4F1F4'}}>
+                <div className="page" style={{fontSize: '1rem', borderTop: '2px solid #F4F1F4'}}>
                     <div className="row sub-header">
                         <div className={`sub-header-tab${currentTab === 0 ? '-active' : ''}`}
                             onClick={() => {this.setState({currentTab: 0});}}
@@ -808,7 +826,11 @@ class ReportsPage extends React.Component {
                         </div>
                     </div>
                     <div style={{width: '100%', marginTop: 20, padding: 15, alignItems: 'center'}}>
-                        <ReportBody/>
+                        {
+                            isloading === true ? <div class="text-center" style={{marginTop: '10%'}}>
+                                Loading Data. Please wait...
+                            </div> : <ReportBody/>
+                        }
                     </div>
                 </div>
             </div>

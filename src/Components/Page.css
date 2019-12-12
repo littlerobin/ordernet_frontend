@@ -131,12 +131,14 @@ table {
 }
 
 .Dropdown-placeholder,.Dropdown-option {
+    font-size: 0.7rem;
     color: white !important;
 }
 
 .Dropdown-control {
     background-color: #354960 !important;
     padding-right: 10px !important;
+    height: 4em !important;
     overflow-x: hidden;
 }
 
@@ -180,7 +182,7 @@ table {
 }
 
 .Dropdown-option {
-    font-size: 0.5rem;
+    font-size: 0.7rem;
 }
 
 .Dropdown-option .Dropdown-option:hover {
@@ -206,7 +208,7 @@ table {
 /*--------------------------- Order Page ----------------------------*/
 
 .sub-header {
-    font-size: 0.5rem;
+    font-size: 0.75rem;
     font-weight: 700;
     background-color: #E4E1E4;
     margin: -20px;

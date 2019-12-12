@@ -14,6 +14,7 @@ import cookie from 'js-cookie';
 
 class OrderingPage extends React.Component {
     deliveryDateRef = null;
+    quantumRef = null;
 
     constructor(props) {
         super(props);
@@ -36,6 +37,7 @@ class OrderingPage extends React.Component {
 
             curSelectedItem: null,
             currentQuantum: 0,
+            currentRowItem: null,
 
             quantum: {},
 
@@ -48,6 +50,8 @@ class OrderingPage extends React.Component {
 
             totalItems: 0,
             totalCost: 0,
+
+            issubmit: false,
         }
 
         this.initializeData = this.initializeData.bind(this);
@@ -97,7 +101,7 @@ class OrderingPage extends React.Component {
         orgProducts.forEach(function(orgOne){
             if (filterCode !== null && !(orgOne.Category.toUpperCase().match(filterCode.TBLCHAR.toUpperCase())
                 && orgOne.descrip.toUpperCase().match(filterCode.TBLDESC.toUpperCase()))){}
-            else if (isProfileItems === true && orgOne.S === '*'){}
+            else if (isProfileItems === true && orgOne.S !== '*'){}
             else if (!(orgOne.item.toUpperCase().match(searchKey.toUpperCase()) || orgOne.descrip.toUpperCase().match(searchKey.toUpperCase()))){}
             else
                 products.push(orgOne);
@@ -121,10 +125,11 @@ class OrderingPage extends React.Component {
             let data = response.data;
             let codes = data.productcodes, productcodes = [];
             
+            let allProducts = {TBLCHAR: '', TBLDESC: ''};
+
             productcodes.push({
-                key: null,
-                value: null,
-                value: 'ALL PRODUCTS',
+                label: 'ALL PRODUCTS',
+                value: JSON.stringify(allProducts),
             })
 
             codes.forEach(function(code) {
@@ -146,10 +151,20 @@ class OrderingPage extends React.Component {
     componentDidMount() {
     }
 
+    componentDidUpdate() {
+        if (this.quantumRef !== null)
+            this.quantumRef.focus();
+    }
+
     handleDevelieryDateChanged = date => {
         this.setState({
             deliveryDate: date
         });
+    }
+
+    onCurRowChanged = (newSelectedItem) => {
+        this.setState({currentRowItem: newSelectedItem});
+        this.setState({curSelectedItem: null, currentQuantum: 0})
     }
 
     onSelectedRowChanged = (newSelectedItem) => {
@@ -182,11 +197,11 @@ class OrderingPage extends React.Component {
     }
 
     completeOrder = () => {
-        let { deliveryDate, quantum, products, username, password, custComments, custPONum } = this.state;
+        let { deliveryDate, quantum, orgProducts, username, password, custComments, custPONum } = this.state;
 
         let product_info = [], totalPrice = 0;
 
-        products.map(product => {
+        orgProducts.map(product => {
             if (quantum[product.item] !== undefined && quantum[product.item] > 0) {
                 product_info.push({
                     'quantity': quantum[product.item],
@@ -198,6 +213,8 @@ class OrderingPage extends React.Component {
                 totalPrice += quantum[product.item] * product.Price1;
             }
         });
+
+        this.setState({issubmit: true});
 
         axios({
             url: `${APIInfo.serverUrl}${APIInfo.apiContext}${APIInfo.version}${APIInfo.submitOrder}`,
@@ -213,10 +230,11 @@ class OrderingPage extends React.Component {
         })
         .then((res) => {
             let orderID = res.data.orderID;
-            this.setState({orderID: orderID, totalItems: product_info.length, totalCost: totalPrice });
+            this.setState({orderID: orderID, totalItems: product_info.length, totalCost: totalPrice, issubmit: false });
         })
         .catch((err) => {
             console.log(err);
+            this.setState({issubmit: false});
         })
     }
 
@@ -230,19 +248,28 @@ class OrderingPage extends React.Component {
 
     render() {
         if (this.state.isLoading === true) {
-            return (<div class="text-center" style={{marginTop: '30%'}}>
+            return (<div className="text-center" style={{marginTop: '30%'}}>
                 Loading data. Please wait....
             </div>)
         }
 
         let products = this.applySearchFilter();
         
-        let { deliveryDate, orderID, customer, productcodes, quantum, filterCode,
+        let { deliveryDate, orderID, customer, productcodes, quantum, filterCode, issubmit, currentRowItem,
             curSelectedItem, isReviewMode, custPONum, totalCost, totalItems, custComments } = this.state;
         let totalPrice = 0;
         let curSelectedRow = null;
         if (curSelectedItem !== null)
             curSelectedRow = curSelectedItem.item;
+
+        if (issubmit === true) {
+            return (<div>
+                <Header currentPage={0}/>
+                <div className="text-center" style={{marginTop: '30%'}}>
+                    Creating order. Please wait...
+                </div>
+            </div>)
+        }
 
         return (
             <div>
@@ -311,7 +338,7 @@ class OrderingPage extends React.Component {
                         <Dropdown onChange={newVal => this.onProductCodeChange(newVal)} 
                             value={filterCode} options={productcodes} placeholder = 'ALL PRODUCTS' style={{marginBottom: '5px'}}/>
                     </div>
-                    <table className="order-table table table-bordered table-condensed table-striped table-hover">
+                    <table className="order-table">
                         <thead>
                             <tr>
                                 <th style={{width: '5%'}}>QTY</th>
@@ -337,22 +364,23 @@ class OrderingPage extends React.Component {
                                      : ((quantum[product.item] !== undefined && quantum[product.item] > 0) ? 'quanted-row' : '')}>
                                         <td>
                                             {
-                                                product.item === curSelectedRow ? <input type="text" style={{width: '100%'}}
+                                                product.item === curSelectedRow ? <input ref={(input) => {this.quantumRef = input}} type="text" style={{width: '100%'}}
+                                                    onKeyUp={e => {if (e.keyCode === 13) { this.onSelectedRowChanged(product) }}}
                                                     onChange={e => {e.preventDefault();e.stopPropagation(); this.onCurQuanChanged(e)}}/> : 
                                                     <div onClick={() => {this.onSelectedRowChanged(product)}}>
                                                         {(quantum[product.item] !== undefined && quantum[product.item] > 0) ? quantum[product.item] : 0}
                                                     </div>
                                             }
                                         </td>
-                                        <td onClick={() => {this.onSelectedRowChanged(product)}}>{product.size}</td>
-                                        <td onClick={() => {this.onSelectedRowChanged(product)}}>{product.Pack}</td>
-                                        <td onClick={() => {this.onSelectedRowChanged(product)}}>{product.descrip}</td>
-                                        <td onClick={() => {this.onSelectedRowChanged(product)}}>{parseFloat(product.Price1).toFixed(2)}</td>
-                                        <td onClick={() => {this.onSelectedRowChanged(product)}}>{(quantum[product.item] !== undefined && quantum[product.item] > 0)
+                                        <td onClick={() => {this.onCurRowChanged(product)}}>{product.size}</td>
+                                        <td onClick={() => {this.onCurRowChanged(product)}}>{product.Pack}</td>
+                                        <td onClick={() => {this.onCurRowChanged(product)}}>{product.descrip}</td>
+                                        <td onClick={() => {this.onCurRowChanged(product)}}>{parseFloat(product.Price1).toFixed(2)}</td>
+                                        <td onClick={() => {this.onCurRowChanged(product)}}>{(quantum[product.item] !== undefined && quantum[product.item] > 0)
                                             ? (quantum[product.item] * product.Price1).toFixed(2) : 0}</td>
-                                        <td onClick={() => {this.onSelectedRowChanged(product)}}>{product.item}</td>
-                                        <td onClick={() => {this.onSelectedRowChanged(product)}}>{product.Category}</td>
-                                        <td onClick={() => {this.onSelectedRowChanged(product)}}>{product.S}</td>
+                                        <td onClick={() => {this.onCurRowChanged(product)}}>{product.item}</td>
+                                        <td onClick={() => {this.onCurRowChanged(product)}}>{product.Category}</td>
+                                        <td onClick={() => {this.onCurRowChanged(product)}}>{product.S}</td>
                                     </tr>);
                                 })
                             }
@@ -391,13 +419,13 @@ class OrderingPage extends React.Component {
                             </div>
                             <div className="col-md-2" style={{fontSize: '0.75rem', minHeight: '150px', backgroundColor: '#B58A00', color: '#FFFFFF', borderRadius: 10, textAlign: 'center'}}>
                                 {
-                                    curSelectedItem === null ? (<div></div>) : (<div style={{lineHeight: '3em'}}>
-                                        <div>{curSelectedItem.item}</div>
+                                    currentRowItem === null ? (<div></div>) : (<div style={{lineHeight: '3em'}}>
+                                        <div>{currentRowItem.item}</div>
                                         <div style={{border: '1px solid darkgray', minHeight: '3em'}}>
-                                            {curSelectedItem.descrip}
+                                            {currentRowItem.descrip}
                                         </div>
-                                        <div>PRICE ${parseFloat(curSelectedItem.Price1).toFixed(2)}</div>
-                                        <div>QUANTITY {quantum[curSelectedItem.item] === undefined ? 0 : quantum[curSelectedItem.item]}</div>
+                                        <div>PRICE ${parseFloat(currentRowItem.Price1).toFixed(2)}</div>
+                                        <div>QUANTITY {quantum[currentRowItem.item] === undefined ? 0 : quantum[currentRowItem.item]}</div>
                                     </div>)
                                 }
                             </div>

@@ -1,6 +1,6 @@
 let APIInfo = {
     baseUrl: "ordernet",
-    serverUrl: "http://192.168.8.117:8000/",
+    serverUrl: "http://192.168.8.102:8000/",
     apiContext: "api/",
     version: "v1/",
     customer: "customer",
