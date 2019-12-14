@@ -6,13 +6,13 @@
 }
 
 .company-name {
-    font-size: 1rem;
+    font-size: 1.2rem;
     font-weight: 900;
     margin-bottom: 5px;
 }
 
 .text-default {
-    font-size: 0.625rem;
+    font-size: 0.85rem;
     margin-bottom: 5px;
     min-height: 1em;
 }
@@ -126,7 +126,7 @@ table {
 /* customized dropdown */
 
 .Dropdown-root {
-    width: 45%;
+    width: 35%;
     display: inline-grid;
 }
 
@@ -138,8 +138,10 @@ table {
 .Dropdown-control {
     background-color: #354960 !important;
     padding-right: 10px !important;
-    height: 4em !important;
+    height: 2em !important;
     overflow-x: hidden;
+    border-radius: 5px !important;
+    justify-content: center;
 }
 
 .Dropdown-menu {
@@ -193,13 +195,6 @@ table {
     background-color: #18BEA0 !important;
 }
 
-.Dropdown-control {
-    font-size: 0.5rem;
-    height: 3em !important;
-    border-radius: 5px !important;
-    justify-content: center;
-}
-
 .Dropdown-arrow {
     display: none !important;
 }
@@ -242,4 +237,14 @@ table {
 }
 .show-statement:active {
     background-color: #E4E1E4;
+}
+
+@media only screen and (max-width : 768px) {
+    .sub-header {
+        font-size: 0.6rem;
+        font-weight: 700;
+        background-color: #E4E1E4;
+        margin: -20px;
+        text-align: center;
+    }
 }

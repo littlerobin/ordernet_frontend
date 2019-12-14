@@ -530,7 +530,7 @@ class ReportsPage extends React.Component {
                             //open={this.state.pickerOpen}
                             selected = {fromDate}
                             onChange = {wholePage.handleFromDateChanged}
-                            popperPlacement = "right-left"
+                            
                             className = "date-picker"
                         />
                         <img src="../assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.fromDateRef.setOpen(true);}}/>
@@ -542,7 +542,7 @@ class ReportsPage extends React.Component {
                             //open={this.state.pickerOpen}
                             selected = {toDate}
                             onChange = {wholePage.handleToDateChanged}
-                            popperPlacement = "right-left"
+                            
                             className = "date-picker"
                         />
                         <img src="../assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.toDateRef.setOpen(true);}}/>

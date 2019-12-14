@@ -43,3 +43,26 @@ a, a:visited, a:hover, a:active {
 .float-right {
     float: right;
 }
+
+/* Small Devices, Tablets */
+@media only screen and (max-width : 768px) {
+    .tab-header-button {
+        font-size: 0.6rem;
+        padding: 4px;
+    }
+    .header-app-title {
+        color: blue;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+    
+    .header-app-version {
+        color: blue;
+        font-size: 0.6rem;
+        font-weight: 500;
+    }
+
+    .Dropdown-root {
+        width: 100%;
+    }
+}

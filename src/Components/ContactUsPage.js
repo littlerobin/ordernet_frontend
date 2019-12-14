@@ -14,6 +14,9 @@ class ContactUsPage extends React.Component {
                 <Header currentPage={3}/>
                 <div className="page text-center">
                     <div className="company-name">
+                        Lucky Produce                        
+                    </div>
+                    <div className="text-default">
                         100 Some Street
                     </div>
                     <div className="text-default">

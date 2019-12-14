@@ -248,8 +248,13 @@ class OrderingPage extends React.Component {
 
     render() {
         if (this.state.isLoading === true) {
-            return (<div className="text-center" style={{marginTop: '30%'}}>
-                Loading data. Please wait....
+            return (<div>
+                <Header currentPage={0}/>
+                <div className="page">
+                    <div className="text-center" style={{marginTop: '10%'}}>
+                        Loading data. Please wait....
+                    </div>
+                </div>
             </div>)
         }
 
@@ -265,8 +270,10 @@ class OrderingPage extends React.Component {
         if (issubmit === true) {
             return (<div>
                 <Header currentPage={0}/>
-                <div className="text-center" style={{marginTop: '30%'}}>
-                    Creating order. Please wait...
+                <div className="page">
+                    <div className="text-center" style={{marginTop: '10%'}}>
+                        Creating order. Please wait...
+                    </div>
                 </div>
             </div>)
         }
@@ -389,7 +396,8 @@ class OrderingPage extends React.Component {
 
                     {   orderID === "" ? (<div className="row" style={{marginTop: 15, textAlign: 'center'}}>
                             <div className="col-md-5">
-                                <div style={{borderRadius: 5, backgroundColor: '#FFA000', border: '0.5px solid black', marginBottom: 10}}>
+                                <div style={{borderRadius: 5, backgroundColor: '#FFA000', border: '0.5px solid gray',
+                                    fontWeight: 700, color: '#FFFFFF', marginBottom: 10}}>
                                     ORDER TOTAL<br/>${totalPrice.toFixed(2)}
                                 </div>
                                 <div style={{display: isReviewMode ? 'none' : 'block'}}>
@@ -398,21 +406,21 @@ class OrderingPage extends React.Component {
                                         PROFILE ITEMS
                                     </label>
                                 </div>
-                                <div className="review-order" style={{display: 'block', marginTop: 15}} onClick={() => {this.setState({isReviewMode: !isReviewMode})}}>
+                                <div className="review-order" style={{backgroundColor: '#F6F2F6', border: '1px solid #F8F8F8', display: 'block', padding: 5}} onClick={() => {this.setState({isReviewMode: !isReviewMode})}}>
                                     { isReviewMode === false ? 'Review Order' : 'Continue Review'}
                                 </div>
-                                <div className="complete-order" style={{display: 'block', color: 'red', marginTop: 15}} onClick={() => {this.completeOrder()}}>
+                                <div className="complete-order" style={{backgroundColor: '#F6F2F6', border: '1px solid #F8F8F8', display: 'block', color: 'red', padding: 5}} onClick={() => {this.completeOrder()}}>
                                     Complete Order
                                 </div>
-                                <div className="clear-entire-order" style={{display: 'block', color: 'red', marginTop: 15}} onClick={() => {this.clearEntireOrder()}}>
+                                <div className="clear-entire-order" style={{backgroundColor: '#F6F2F6', border: '1px solid #F8F8F8', display: 'block', color: 'red', padding: 5}} onClick={() => {this.clearEntireOrder()}}>
                                     Clear Entire Order
                                 </div>
                             </div>
                             <div className="col-md-5">
-                                <div>Enter comments here:</div>
+                                <div style={{textAlign: 'left'}}>Enter comments here:</div>
                                 <textarea style={{display: 'block', width: '100%', height: '10em', resize: 'none', backgroundColor: '#F4F1F4', borderRadius: 5}}
                                     onChange={e => {this.commentChanged(e)}} onClick={() => {this.setState({isCommentEditing: true})}}/>
-                                <div style={{display: this.state.isCommentEditing === true ? 'block' : 'none'}}
+                                <div style={{textAlign: 'left', backgroundColor: '#F6F2F6', display: this.state.isCommentEditing === true ? 'block' : 'none'}}
                                     className="save-comments" onClick={() => {this.setState({isCommentEditing: false})}}>
                                     SAVE COMMENTS
                                 </div>
