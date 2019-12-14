@@ -18,12 +18,10 @@
   },
   "homepage": "/ordernet/",
   "scripts": {
-    "start": "npm run remove:www && react-scripts start",
-    "build": "npm run remove:www && react-scripts build",
-    "build:debug": "react-scripts build",
-    "build:cordova": "npm run remove:www && react-scripts build && node __script.js && move build www",
-    "eject": "npm run remove:www && react-scripts eject",
-    "remove:www": "if exist www rd /s /q www"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
