@@ -183,11 +183,7 @@ table {
     border-left: 13px solid transparent  !important;*/
 }
 
-.Dropdown-option {
-    font-size: 0.7rem;
-}
-
-.Dropdown-option .Dropdown-option:hover {
+.Dropdown-option:hover {
     background-color: #354960 !important;
 }
 

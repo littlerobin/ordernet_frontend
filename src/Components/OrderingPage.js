@@ -30,7 +30,7 @@ class OrderingPage extends React.Component {
             pickerOpen: false,
 
             searchKey: '',
-            isProfileItems: false,
+            isProfileItems: true,
             filterCode: null,
 
             isReviewMode: false,
@@ -89,7 +89,7 @@ class OrderingPage extends React.Component {
     }
 
     applySearchFilter() {
-        let { orgProducts, filterCode, searchKey, isProfileItems, isReviewMode } = this.state;
+        let { quantum, orgProducts, filterCode, searchKey, isProfileItems, isReviewMode } = this.state;
         let products = [];
 
         if (filterCode !== null) {
@@ -99,12 +99,19 @@ class OrderingPage extends React.Component {
         }
 
         orgProducts.forEach(function(orgOne){
-            if (filterCode !== null && !(orgOne.Category.toUpperCase().match(filterCode.TBLCHAR.toUpperCase())
-                && orgOne.descrip.toUpperCase().match(filterCode.TBLDESC.toUpperCase()))){}
-            else if (isProfileItems === true && orgOne.S !== '*'){}
-            else if (!(orgOne.item.toUpperCase().match(searchKey.toUpperCase()) || orgOne.descrip.toUpperCase().match(searchKey.toUpperCase()))){}
-            else
-                products.push(orgOne);
+            if (isReviewMode === true) {
+                if (quantum[orgOne.item] === undefined && quantum[orgOne.item] === 0);
+                else
+                    products.push(orgOne);
+            }
+            else {
+                if (filterCode !== null && !(orgOne.Category.toUpperCase().match(filterCode.TBLCHAR.toUpperCase())
+                    && orgOne.descrip.toUpperCase().match(filterCode.TBLDESC.toUpperCase()))){}
+                else if (isProfileItems === true && orgOne.S !== '*'){}
+                else if (!(orgOne.item.toUpperCase().match(searchKey.toUpperCase()) || orgOne.descrip.toUpperCase().match(searchKey.toUpperCase()))){}
+                else
+                    products.push(orgOne);
+            }
         });
 
         return products;
@@ -152,8 +159,9 @@ class OrderingPage extends React.Component {
     }
 
     componentDidUpdate() {
-        if (this.quantumRef !== null)
+        if (this.quantumRef !== null) {
             this.quantumRef.focus();
+        }
     }
 
     handleDevelieryDateChanged = date => {
@@ -171,13 +179,13 @@ class OrderingPage extends React.Component {
         let { quantum, curSelectedItem, currentQuantum } = this.state;
 
         if (curSelectedItem !== null && curSelectedItem.item === newSelectedItem.item) {
-            quantum[curSelectedItem.item] = parseInt(currentQuantum);
+            quantum[curSelectedItem.item] = parseFloat(currentQuantum);
             this.setState({quantum: quantum, currentQuantum: 0, curSelectedItem: null});
             return;
         }
 
         if (curSelectedItem !== null)
-            quantum[curSelectedItem.item] = parseInt(currentQuantum);
+            quantum[curSelectedItem.item] = parseFloat(currentQuantum);
 
         this.setState({curSelectedItem: newSelectedItem, quantum: quantum,
             currentQuantum: quantum[newSelectedItem.item] === undefined ? 0 : quantum[newSelectedItem.item]});
@@ -260,8 +268,8 @@ class OrderingPage extends React.Component {
 
         let products = this.applySearchFilter();
         
-        let { deliveryDate, orderID, customer, productcodes, quantum, filterCode, issubmit, currentRowItem,
-            curSelectedItem, isReviewMode, custPONum, totalCost, totalItems, custComments } = this.state;
+        let { isProfileItems, deliveryDate, orderID, customer, productcodes, quantum, filterCode, issubmit, currentRowItem,
+            currentQuantum, curSelectedItem, isReviewMode, custPONum, totalCost, totalItems, custComments } = this.state;
         let totalPrice = 0;
         let curSelectedRow = null;
         if (curSelectedItem !== null)
@@ -372,6 +380,7 @@ class OrderingPage extends React.Component {
                                         <td>
                                             {
                                                 product.item === curSelectedRow ? <input ref={(input) => {this.quantumRef = input}} type="text" style={{width: '100%'}}
+                                                    value = {currentQuantum}
                                                     onKeyUp={e => {if (e.keyCode === 13) { this.onSelectedRowChanged(product) }}}
                                                     onChange={e => {e.preventDefault();e.stopPropagation(); this.onCurQuanChanged(e)}}/> : 
                                                     <div onClick={() => {this.onSelectedRowChanged(product)}}>
@@ -402,12 +411,14 @@ class OrderingPage extends React.Component {
                                 </div>
                                 <div style={{display: isReviewMode ? 'none' : 'block'}}>
                                     <label onClick={() => {this.onChangeIsProfile();}}>
-                                        <input type="checkbox"/>
+                                        {
+                                            isProfileItems === false ? <input type="checkbox" /> : <input type="checkbox" checked/>
+                                        }
                                         PROFILE ITEMS
                                     </label>
                                 </div>
                                 <div className="review-order" style={{backgroundColor: '#F6F2F6', border: '1px solid #F8F8F8', display: 'block', padding: 5}} onClick={() => {this.setState({isReviewMode: !isReviewMode})}}>
-                                    { isReviewMode === false ? 'Review Order' : 'Continue Review'}
+                                    { isReviewMode === false ? 'Review Order' : 'Continue Ordering'}
                                 </div>
                                 <div className="complete-order" style={{backgroundColor: '#F6F2F6', border: '1px solid #F8F8F8', display: 'block', color: 'red', padding: 5}} onClick={() => {this.completeOrder()}}>
                                     Complete Order
