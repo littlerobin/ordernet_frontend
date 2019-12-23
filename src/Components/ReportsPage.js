@@ -440,7 +440,7 @@ class ReportsPage extends React.Component {
                             onChange = {wholePage.handleFromSummaryChanged}
                             className = "date-picker"
                         />
-                        <img src="../assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.fromDateRef.setOpen(true);}}/>
+                        <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.fromDateRef.setOpen(true);}}/>
                     </div>
                     <div style={{marginRight: '5px'}}>
                         To&nbsp;
@@ -451,7 +451,7 @@ class ReportsPage extends React.Component {
                             onChange = {wholePage.handleToSummaryChanged}
                             className = "date-picker"
                         />
-                        <img src="../assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.toDateRef.setOpen(true);}}/>
+                        <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.toDateRef.setOpen(true);}}/>
                     </div>
                     <div className="show-statement" style={{textAlign: 'center', marginTop: 20, marginBottom: 20,
                         padding: 15, width: 'fit-content', alignItems: 'center'}}
@@ -533,7 +533,7 @@ class ReportsPage extends React.Component {
                             
                             className = "date-picker"
                         />
-                        <img src="../assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.fromDateRef.setOpen(true);}}/>
+                        <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.fromDateRef.setOpen(true);}}/>
                     </div>
                     <div style={{marginRight: '5px'}}>
                         To&nbsp;
@@ -545,7 +545,7 @@ class ReportsPage extends React.Component {
                             
                             className = "date-picker"
                         />
-                        <img src="../assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.toDateRef.setOpen(true);}}/>
+                        <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.toDateRef.setOpen(true);}}/>
                     </div>
                     <div className="show-statement" style={{textAlign: 'center', marginTop: 20, marginBottom: 20,
                         padding: 15, width: 'fit-content', alignItems: 'center'}}

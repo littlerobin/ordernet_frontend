@@ -346,9 +346,10 @@ class OrderingPage extends React.Component {
                                 ref = {component => {this.deliveryDateRef = component;}}
                                 selected = {this.state.deliveryDate}
                                 onChange = {this.handleDevelieryDateChanged}
+                                minDate = {new Date()}
                                 className = "date-picker"
                             />
-                            <img src="../assets/calendar.png" style={{marginRight: '10px', width:20, height:20}} onClick={() => {this.deliveryDateRef.setOpen(true);}}/>
+                            <img src="/assets/calendar.png" style={{marginRight: '10px', width:20, height:20}} onClick={() => {this.deliveryDateRef.setOpen(true);}}/>
                         </div>
                         <Dropdown onChange={newVal => this.onProductCodeChange(newVal)} 
                             value={filterCode} options={productcodes} placeholder = 'ALL PRODUCTS' style={{marginBottom: '5px'}}/>
@@ -357,14 +358,14 @@ class OrderingPage extends React.Component {
                         <thead>
                             <tr>
                                 <th style={{width: '5%'}}>QTY</th>
-                                <th style={{width: '5%'}}>U/M</th>
+                                <th style={{width: '3%'}}>U/M</th>
                                 <th style={{width: '5%'}}>PACK</th>
-                                <th style={{width: '45%'}}>DESCRIPTION</th>
-                                <th style={{width: '5%'}}>PRICE</th>
+                                <th style={{width: '40%'}}>DESCRIPTION</th>
+                                <th style={{width: '10%'}}>PRICE</th>
                                 <th style={{width: '5%'}}>EXT.PRICE</th>
                                 <th style={{width: '5%'}}>ITEM</th>
-                                <th style={{width: '5%'}}>CODE</th>
-                                <th style={{width: '5%'}}></th>
+                                <th style={{width: '3%'}}>CODE</th>
+                                <th style={{width: '2%'}}></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -391,9 +392,9 @@ class OrderingPage extends React.Component {
                                         <td onClick={() => {this.onCurRowChanged(product)}}>{product.size}</td>
                                         <td onClick={() => {this.onCurRowChanged(product)}}>{product.Pack}</td>
                                         <td onClick={() => {this.onCurRowChanged(product)}}>{product.descrip}</td>
-                                        <td onClick={() => {this.onCurRowChanged(product)}}>{parseFloat(product.Price1).toFixed(2)}</td>
-                                        <td onClick={() => {this.onCurRowChanged(product)}}>{(quantum[product.item] !== undefined && quantum[product.item] > 0)
-                                            ? (quantum[product.item] * product.Price1).toFixed(2) : 0}</td>
+                                        <td onClick={() => {this.onCurRowChanged(product)}}>${parseFloat(product.Price1).toFixed(2)}</td>
+                                        <td onClick={() => {this.onCurRowChanged(product)}}>${quantum[product.item] !== undefined
+                                            ? (quantum[product.item] * parseFloat(product.Price1)).toFixed(2) : "0.00"}</td>
                                         <td onClick={() => {this.onCurRowChanged(product)}}>{product.item}</td>
                                         <td onClick={() => {this.onCurRowChanged(product)}}>{product.Category}</td>
                                         <td onClick={() => {this.onCurRowChanged(product)}}>{product.S}</td>
