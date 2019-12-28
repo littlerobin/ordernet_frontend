@@ -25,7 +25,7 @@ class ReportsPage extends React.Component {
             username: cookie.get('ordernet_username'),
             password: cookie.get('ordernet_password'),
             customerNumber: cookie.get('ordernet_customerNumber'),
-            currentTab: 0,
+            currentTab: 2,
             catalogs: null,
 
             statement: null,
@@ -77,6 +77,7 @@ class ReportsPage extends React.Component {
 
     async componentDidMount() {
         this.getCatalog();
+        this.getUserInfo();
         this.getInvoices();
     }
 
@@ -153,10 +154,34 @@ class ReportsPage extends React.Component {
         })
     }
 
+    async getUserInfo() {
+        this.setState({isloading: true});
+
+        let userinfo = {};
+        const { username, password } = this.state;
+
+        await axios({
+            method: 'post',
+            url: `${APIInfo.serverUrl}${APIInfo.apiContext}${APIInfo.version}${APIInfo.userInfo}`,
+            data: {
+                username: username,
+                password: password,
+            }
+        })
+        .then((res) => {
+            userinfo = res.data.userinfo;
+        })
+        .catch((err) => {
+            console.log(err)
+        });
+
+        this.setState({userinfo: userinfo, isloading: false});
+    }
+
     async getDetailInvoice() {
         this.setState({isloading: true});
 
-        let detail = [], userinfo = {}
+        let detail = [];
         const { username, password, customerNumber, fromDate, toDate } = this.state;
         await axios({
             method: 'post',
@@ -177,28 +202,13 @@ class ReportsPage extends React.Component {
             console.log(err)
         });
 
-        await axios({
-            method: 'post',
-            url: `${APIInfo.serverUrl}${APIInfo.apiContext}${APIInfo.version}${APIInfo.userInfo}`,
-            data: {
-                username: 'americ',
-                password: 'americ',
-            }
-        })
-        .then((res) => {
-            userinfo = res.data.userinfo;
-        })
-        .catch((err) => {
-            console.log(err)
-        });
-
-        this.setState({userinfo: userinfo, detail: detail, isloading: false});
+        this.setState({detail: detail, isloading: false});
     }
 
     async getInvoiceSummary() {
         this.setState({isloading: true});
 
-        let summary = [], userinfo = {};
+        let summary = [];
         const { username, password, customerNumber, fromSummary, toSummary } = this.state;
         await axios({
             method: 'post',
@@ -219,23 +229,7 @@ class ReportsPage extends React.Component {
             console.log(err)
         });
 
-        await axios({
-            method: 'post',
-            url: `${APIInfo.serverUrl}${APIInfo.apiContext}${APIInfo.version}${APIInfo.userInfo}`,
-            data: {
-                username: 'americ',
-                password: 'americ',
-            }
-        })
-        .then((res) => {
-            userinfo = res.data.userinfo;
-            //this.setState({userinfo: userinfo});
-        })
-        .catch((err) => {
-            console.log(err)
-        });
-
-        this.setState({userinfo: userinfo, summary: summary, isloading: false});
+        this.setState({summary: summary, isloading: false});
     }
 
     async getOneInvoice(currentinvno) {
@@ -286,8 +280,6 @@ class ReportsPage extends React.Component {
         const wholePage = this;
 
         function ViewInvoice() {
-            console.log(currentinvoice);
-
             if (invoices === null)
                 return (<div></div>);
 
@@ -303,18 +295,18 @@ class ReportsPage extends React.Component {
             })
 
             return (<div>
-                <div className="" style={{marginLeft: 0, marginBottom: 15}}>
+                <div className="" style={{marginLeft: 0, marginBottom: 15, display: "inline-flex", alignItems: "center"}}>
                     <Dropdown options={invoicelist} value={currentinvno} placeholder='Select Invoice'
-                        onChange={newInv => {wholePage.onCurrentInvoiceChange(newInv.value);}}
-                        style={{ width:'45%', marginLeft: 10}}/>
+                        onChange={newInv => {wholePage.onCurrentInvoiceChange(newInv.value);}}/>
                     <span style={{width: '5%', textAlign: 'center', marginLeft: 5, marginRight: 5}}>OR</span>
                     <input type="text" placeholder="Enter Invoice Number" style={{width:'45%', marginRight: 10}}/>
+                    <input type="button" value="GO"/>
                 </div>
                 {
                     currentinvoice === null ? (<div></div>) : (
                         <div>
-                            <div className="row" style={{marginLeft: 0, marginBottom:10, alignItems: 'normal'}}>
-                                <div className="col-md-5" style={{marginTop: 5}}>
+                            <div className="row" style={{marginBottom:10, alignItems: 'normal'}}>
+                                <div className="col-md-5" style={{}}>
                                     <div className="ship-to">
                                         <div className="text-default"><b>SHIP TO</b></div>
                                         <div className="text-default">{currentinvoice.shippingCompany}</div>
@@ -323,7 +315,7 @@ class ReportsPage extends React.Component {
                                         <div className="text-default">{`${currentinvoice.shippingCity} ${currentinvoice.shippingState} ${currentinvoice.shippingZip}`}</div>
                                     </div>
                                 </div>
-                                <div className="col-md-5" style={{marginTop: 5}}>
+                                <div className="col-md-5" style={{}}>
                                     <div className="ship-to">
                                         <div className="text-default"><b>SHIP TO</b></div>
                                         <div className="text-default">{currentinvoice.billingCompany}</div>
@@ -346,80 +338,82 @@ class ReportsPage extends React.Component {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <table className="order-table">
-                                <thead>
-                                    <tr>
-                                        <th style={{width: '10%'}}>Quantity</th>
-                                        <th style={{width: '30%'}}>Item</th>
-                                        <th style={{width: '30%'}}>Description</th>
-                                        <th style={{width: '10%'}}>U/M</th>
-                                        <th style={{width: '20%'}}>Price</th>
-                                        <th style={{width: '20%'}}>Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        currentinvoice.products.map(product => {
-                                            return (<tr>
-                                                <td>{product.quantity}</td>
-                                                <td>{product.item}</td>
-                                                <td>{product.description}</td>
-                                                <td></td>
-                                                <td>{product.price1}</td>
-                                                <td>{product.quantity * product.price1}</td>
-                                            </tr>);
-                                        })
-                                    }
-                                </tbody>
-                            </table>
-                            <div className="row" style={{color: 'black', textAlign: 'center', marginTop: 10}}>
-                                <div className="col-md-4" style={{marginTop: 5}}>
-                                    <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10, marginBottom: 5}}>
-                                        CUSTOMER NO.<br/>
-                                        {currentinvoice.customerNumber}
-                                    </div>
+                                <div className="col-md-10">
+                                    <table className="order-table">
+                                        <thead>
+                                            <tr>
+                                                <th style={{width: '10%'}}>Quantity</th>
+                                                <th style={{width: '30%'}}>Item</th>
+                                                <th style={{width: '30%'}}>Description</th>
+                                                <th style={{width: '10%'}}>U/M</th>
+                                                <th style={{width: '20%'}}>Price</th>
+                                                <th style={{width: '20%'}}>Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                currentinvoice.products.map(product => {
+                                                    return (<tr>
+                                                        <td>{product.quantity}</td>
+                                                        <td>{product.item}</td>
+                                                        <td>{product.description}</td>
+                                                        <td></td>
+                                                        <td>{product.price1}</td>
+                                                        <td>{product.quantity * product.price1}</td>
+                                                    </tr>);
+                                                })
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div className="col-md-2" style={{color: 'black', textAlign: 'center'}}>
+                                    <div className="" style={{marginTop: 5}}>
+                                        <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10, marginBottom: 5}}>
+                                            CUSTOMER NO.<br/>
+                                            {currentinvoice.customerNumber}
+                                        </div>
 
-                                    <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10, marginBottom: 5}}>
-                                        FOB<br/>
-                                        {currentinvoice.fob}
-                                    </div>
+                                        <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10, marginBottom: 5}}>
+                                            FOB<br/>
+                                            {currentinvoice.fob}
+                                        </div>
 
-                                    <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10}}>
-                                        SHIP VIA TRUCK<br/>
-                                        {currentinvoice.shipVia}
+                                        <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10}}>
+                                            SHIP VIA TRUCK<br/>
+                                            {currentinvoice.shipVia}
+                                        </div>
+                                    </div>
+                                    <div className="" style={{marginTop: 5}}>
+                                        <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10, marginBottom: 5}}>
+                                            SLSM<br/>
+                                            {currentinvoice.slsm}
+                                        </div>
+
+                                        <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10, marginBottom: 5}}>
+                                            TERMS<br/>
+                                            {currentinvoice.terms}
+                                        </div>
+
+                                        <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10}}>
+                                            CUST PO NO.
+                                            {currentinvoice.poNumber}
+                                        </div>
+                                    </div>
+                                    <div className="" style={{marginTop: 5, color: 'white'}}>
+                                        <div style={{width: '100%', backgroundColor: 'rgba(181, 138, 0, 1)', padding: 10, border: '1px solid gray', borderRadius: 10}}>
+                                            ORDER TOTALS<br/>
+                                            Non-Taxable Subtotal<br/>
+                                            { currentinvoice.subtotal === null ? 0 : currentinvoice.subtotal }
+                                            Taxable Subtotal<br/>
+                                            { currentinvoice.taxableSubtotal === null ? 0 : currentinvoice.taxableSubtotal }
+                                            Tax<br/>
+                                            { currentinvoice.taxRate === null ? 0 : currentinvoice.taxRate }
+                                            Total Order<br/>
+                                            { currentinvoice.total === null ? 0 : currentinvoice.total }
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="col-md-4" style={{marginTop: 5}}>
-                                    <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10, marginBottom: 5}}>
-                                        SLSM<br/>
-                                        {currentinvoice.slsm}
-                                    </div>
-
-                                    <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10, marginBottom: 5}}>
-                                        TERMS<br/>
-                                        {currentinvoice.terms}
-                                    </div>
-
-                                    <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10}}>
-                                        CUST PO NO.
-                                        {currentinvoice.poNumber}
-                                    </div>
-                                </div>
-                                <div className="col-md-4" style={{marginTop: 5, color: 'white'}}>
-                                    <div style={{width: '100%', backgroundColor: 'rgba(181, 138, 0, 1)', padding: 10, border: '1px solid gray', borderRadius: 10}}>
-                                        ORDER TOTALS<br/>
-                                        Non-Taxable Subtotal<br/>
-                                        { currentinvoice.subtotal === null ? 0 : currentinvoice.subtotal }
-                                        Taxable Subtotal<br/>
-                                        { currentinvoice.taxableSubtotal === null ? 0 : currentinvoice.taxableSubtotal }
-                                        Tax<br/>
-                                        { currentinvoice.taxRate === null ? 0 : currentinvoice.taxRate }
-                                        Total Order<br/>
-                                        { currentinvoice.total === null ? 0 : currentinvoice.total }
-                                    </div>
-                                </div>
-                            </div>
+                            </div> 
                         </div>
                     )
                 }
@@ -453,15 +447,16 @@ class ReportsPage extends React.Component {
                         />
                         <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.toDateRef.setOpen(true);}}/>
                     </div>
-                    <div className="show-statement" style={{textAlign: 'center', marginTop: 20, marginBottom: 20,
+                    <input type="button" value="SHOW INVOICE SUMMARY" onClick={() => {wholePage.getInvoiceSummary()}}/>
+                    {/*<div className="show-statement" style={{textAlign: 'center', marginTop: 20, marginBottom: 20,
                         padding: 15, width: 'fit-content', alignItems: 'center'}}
                         onClick={() => {wholePage.getInvoiceSummary();}}>
                         SHOW INVOICE SUMMARY
-                    </div>                    
+                    </div>*/}
                 </div>
                 {
-                    summary === null ? (<div></div>) : (<div>
-                        <table className="order-table" style={{emptyCells: 'show'}}>
+                    summary === null ? (<div></div>) : (<div className="row" style={{alignItems: 'end'}}>
+                        <table className="order-table col-md-10" style={{height: 600, display: 'block', emptyCells: 'show'}}>
                             <thead>
                                 <tr>
                                     <th style={{width: '10%'}}>Invoice #</th>
@@ -491,27 +486,29 @@ class ReportsPage extends React.Component {
                                 }
                             </tbody>
                         </table>
-                        <div className="row" style={{marginTop: 15}}>
-                            <div className="col-md-3"/>
-                            <div className="col-md-2">
+                        <div className="col-md-2">
+                            <div style={{width: '100%', marginBottom: 5}}>
                                 <div style={{fontSize: '0.875rem', border: '1px solid gray', borderRadius: 10, color: 'white',
                                     backgroundColor: 'rgba(249,159,67,1)', padding: 5, textAlign: 'center'}}>
                                     INVOICES TOTAL<br/>
                                     {summary.allInvoicesTotal}
                                 </div>
                             </div>
-                            <div className="col-md-2">
+                            <div style={{width: '100%', marginBottom: 5}}>
                                 <div style={{fontSize: '0.875rem', border: '1px solid gray', borderRadius: 10,
                                     backgroundColor: '#F4F1F4', padding: 5, textAlign: 'center'}}>
                                     SALES TAX TOTAL<br/>
                                     {summary.allInvoicesTotal}
                                 </div>
                             </div>
-                            <div className="col-md-2 show-statement" style={{height: '4em', lineHeight: '4em', verticalAlign: 'middle', textAlign: 'center',
-                                color: 'blue', backgroundColor: '#F4F1F4', fontSize: '0.875rem'}} onClick={() => {wholePage.onCurrentInvoiceChange(wholePage.state.curSummaryInvioceNumber);}}>
+                            <input type="button" style={{width: '100%', color: 'blue'}} value="VIEW INVOICE"
+                                onClick={() => {wholePage.onCurrentInvoiceChange(wholePage.state.curSummaryInvioceNumber)}}/>
+                            {/*<div className="show-statement" style={{width: '100%', height: '4em',
+                                lineHeight: '4em', verticalAlign: 'middle', textAlign: 'center',
+                                color: 'blue', backgroundColor: '#F4F1F4', fontSize: '0.875rem'}}
+                                onClick={() => {wholePage.onCurrentInvoiceChange(wholePage.state.curSummaryInvioceNumber);}}>
                                 VIEW INVOICE
-                            </div>
-                            <div className="col-md-3"/>
+                            </div>*/}
                         </div>
                     </div>)
                 }
@@ -547,46 +544,39 @@ class ReportsPage extends React.Component {
                         />
                         <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.toDateRef.setOpen(true);}}/>
                     </div>
-                    <div className="show-statement" style={{textAlign: 'center', marginTop: 20, marginBottom: 20,
+                    <input type="button" value="SHOW INVOICES WITH DETAILS" onClick={() => {wholePage.getDetailInvoice()}}/>
+                    {/*<div className="show-statement" style={{textAlign: 'center', marginTop: 20, marginBottom: 20,
                         padding: 15, width: 'fit-content', alignItems: 'center'}}
                         onClick={() => {wholePage.getDetailInvoice();}}>
                         SHOW INVOICES
-                    </div>
+                    </div>*/}
                     {
-                        detail === null ? (<div></div>) : (<div style={{border: '1px solid gray', paddingLeft: 30, paddingRight: 30,
+                        (detail === null || detail.invoices.length === 0) ? (<div></div>) : (<div style={{border: '1px solid gray', paddingLeft: 30, paddingRight: 30,
                             marginLeft: 15, borderRadius: 10, backgroundColor: 'rgba(249,159,67,1)'}}>
                             TOTAL ${detail.allInvoicesTotal}
                         </div>)
                     }
                 </div>
                 {
-                    detail === null ? (<div></div>) : (<div>
-                        <div>
-                            Date: {`${month}/${day}/${year} at ${hour}:${minute}`}
-                        </div>
+                    (detail === null || detail.invoices.length === 0) ? (<div>{ detail !== null && <div style={{textAlign: 'center', marginTop: 35}}>No Result</div>}</div>) : (<div>
                         <div style={{textAlign: 'center'}}>
-                            <div>{userinfo.company}</div>
-                            Detail Invoice Register
-                            <div>Invoices From
-                                {`${fromDate.getMonth() + 1}, ${fromDate.getDate()}, ${fromDate.getFullYear()}`} 
-                                To {`${toDate.getMonth() + 1}, ${toDate.getDate()}, ${toDate.getFullYear()}`}
-                            </div>
                             {
                                 detail.invoices.map(invoice => {
                                     let invDate = new Date(invoice.invoiceDate);
                                     return (<div>
                                         <div style={{backgroundColor: 'lightgray'}}>
-                                            Invoice No.{invoice.invoiceNumber} - Date:{invDate.getMonth() + 1, invDate.getDate(), invDate.getFullYear()}
+                                            Invoice No.{invoice.invoiceNumber} - Date:{(invDate.getMonth() + 1) < 10 ? '0' : ''}{invDate.getMonth() + 1}
+                                                /{invDate.getDate() < 10 ? '0' : ''}{invDate.getDate()}
+                                                /{invDate.getFullYear()}
                                         </div>
-                                        <table className="order-table" style={{width: '100%'}}>
+                                        <table className="order-table" style={{width: '100%', textAlign: 'left', marginTop: 15}}>
                                             <thead>
-                                                <tr style={{textAlign: 'left', backgroundColor: 'black', color: 'white'}}>
-                                                    <th style={{padding: 5, border: '1px solid gray'}}>Item</th>
-                                                    <th style={{padding: 5, border: '1px solid gray'}}>Description</th>
-                                                    <th style={{padding: 5, border: '1px solid gray'}}>Price</th>
-                                                    <th style={{padding: 5, border: '1px solid gray'}}>Cost</th>
-                                                    <th style={{padding: 5, border: '1px solid gray'}}>Qty Ship</th>
-                                                    <th style={{padding: 5, border: '1px solid gray'}}>Ext Price</th>
+                                                <tr style={{backgroundColor: 'black'}}>
+                                                    <th style={{width: '25%', border: '1px solid gray'}}>Item</th>
+                                                    <th style={{width: '40%', border: '1px solid gray'}}>Description</th>
+                                                    <th style={{width: '11%', border: '1px solid gray'}}>Price</th>
+                                                    <th style={{width: '11%', border: '1px solid gray'}}>Qty Ship</th>
+                                                    <th style={{width: '13%', border: '1px solid gray'}}>Ext Price</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -596,14 +586,13 @@ class ReportsPage extends React.Component {
                                                             <td style={{border: '1px solid gray'}}>{product.item}</td>
                                                             <td style={{border: '1px solid gray'}}>{product.description}</td>
                                                             <td style={{border: '1px solid gray'}}>{product.price1}</td>
-                                                            <td style={{border: '1px solid gray'}}>{product.cost}</td>
                                                             <td style={{border: '1px solid gray'}}>{product.quantity}</td>
-                                                            <td style={{border: '1px solid gray'}}>{product.extPrice}</td>
+                                                            <td style={{border: '1px solid gray'}}>{(product.price1 * product.quantity).toFixed(2)}</td>
                                                         </tr>)
                                                     })
                                                 }
                                                 <tr style={{backgroundColor: 'black', color: 'white'}}>
-                                                    <td colSpan="5" style={{padding: 5, textAlign: 'left', border: '1px solid gray'}}>Total</td>
+                                                    <td colSpan="4" style={{border: '1px solid gray'}}>Total</td>
                                                     <td style={{border: '1px solid gray'}}>{invoice.invoiceAmount}</td>
                                                 </tr>
                                             </tbody>
@@ -621,51 +610,51 @@ class ReportsPage extends React.Component {
         function Statement() {
             let { curStatementInvoiceNumber } = wholePage.state;
             return (<div>
-                <div className="row">
-                    <div className="col-xs-1 col-sm-1 col-md-1"></div>
-                    <div className="col-xs-3 col-sm-3 col-md-3">
-                        <div style={{textAlign: "center", border: "1px solid black", borderRadius: 10,
-                        paddingTop: 30, paddingBottom:30, marginTop: 15}}>
-                            <div>AGE FROM</div>
-                            <label style={{padding: 5}}>
-                                <input type="radio" name="ageFrom" checked={wholePage.state.ageFrom === "due"}
-                                    onClick={() => {wholePage.setState({ageFrom: "due"})}}/>
-                                Due Date
-                            </label>
-                            <label style={{padding: 5}}>
-                                <input type="radio" name="ageFrom" checked={wholePage.state.ageFrom === "invoice"}
-                                    onClick={() => {wholePage.setState({ageFrom: "invoice"})}}/>
-                                Invoice Date
-                            </label>
-                        </div>
+                <div style={{display: 'inline-flex', fontSize: '0.8rem', justifyContent: 'space-evenly', alignItems: 'center'}}>
+                    <div style={{textAlign: "center", border: "1px solid black", borderRadius: 10,
+                    padding: 10}}>
+                        <div style={{fontWeight:700, marginBottom: 5}}>AGE FROM</div>
+                        <label>
+                            <input type="radio" name="ageFrom" checked={wholePage.state.ageFrom === "due"}
+                                onClick={() => {wholePage.setState({ageFrom: "due"})}}/>
+                            Due Date
+                        </label>
+                        <label style={{marginLeft: 10}}>
+                            <input type="radio" name="ageFrom" checked={wholePage.state.ageFrom === "invoice"}
+                                onClick={() => {wholePage.setState({ageFrom: "invoice"})}}/>
+                            Invoice Date
+                        </label>
                     </div>
-                    <div className="col-xs-7 col-sm-7 col-md-7" style={{textAlign: "center", border: "1px solid black", borderRadius: 10,
-                        paddingTop: 30, paddingBottom:30, marginTop: 15}}>
-                        <div>BREAKDOWN</div>
+                    <div style={{textAlign: "center", border: "1px solid black", borderRadius: 10,
+                        width: '50%', padding: 10}}>
+                        <div style={{fontWeight:700, marginBottom: 5}}>BREAKDOWN</div>
                         Period1: <input type="text" style={{width: "10%"}} value={wholePage.state.period1} onChange={e => {wholePage.onPeriodChange(1, e)}}/>
                         Period2: <input type="text" style={{width: "10%"}} value={wholePage.state.period2} onChange={e => {wholePage.onPeriodChange(2, e)}}/>
                         Period3: <input type="text" style={{width: "10%"}} value={wholePage.state.period3} onChange={e => {wholePage.onPeriodChange(3, e)}}/>
                         Period4: <input type="text" style={{width: "10%"}} value={wholePage.state.period4} onChange={e => {wholePage.onPeriodChange(4, e)}}/>
                     </div>
-                    <br/>
-                    <div className="show-statement col-xs-4 col-sm-4 col-md-4" style={{marginLeft: 'auto', marginRight: 'auto',
-                        lineHeight: '2em', verticalAlign: 'middle', textAlign: 'center', marginTop: 20, marginBottom: 20,
-                        padding: 15, width: 'fit-content', alignItems: 'center'}} onClick={() => {wholePage.getStatement()}}>
-                        SHOW STATEMENT
+                    <div>
+                        <div>
+                            <input type="button" onClick={() => {wholePage.getStatement()}} value="SHOW STATEMENT"/>
+                        </div>
+                        {
+                            statement !== null && <div><br/><input type="button" onClick={() => {printStatement()}} value="PRINT STATEMENT"/></div>
+                        }
                     </div>
                 </div>
                 {
                     statement === null ? (<div></div>) : ( <div>
-                        <div style={{marginLeft: 0, marginBottom:10, alignItems: 'normal'}}>
-                            <div style={{float: 'left', padding: 5, marginBottom: 10, border: '1px solid black', borderRadius: 5, backgroundColor: '#F6F2F6', width: '75%'}}>
+                        <div className="row" style={{marginTop:10, alignItems: 'normal'}}>
+                            <div className="col-md-10" style={{float: 'left', padding: 5, marginBottom: 10, border: '1px solid black',
+                                borderRadius: 5, backgroundColor: '#F6F2F6', height: 'fit-content'}}>
                                 <div className="text-default"><b>BILL TO</b></div>
                                 <div className="text-default">{statement.billingCompany}</div>
                                 <div className="text-default">{statement.billingAddress1}</div>
                                 <div className="text-default">{statement.billingAddress2}</div>
                                 <div className="text-default">{`${statement.billingCity} ${statement.billingState} ${statement.billingZip}`}</div>
                             </div>
-                            <div style={{float: 'left', width: '25%'}}>
-                                <div style={{paddingLeft: 15, textAlign: 'center', fontWeight: 700}}>
+                            <div className="col-md-2">
+                                <div style={{textAlign: 'center', fontSize: '0.75rem', fontWeight: 900}}>
                                     <div style={{backgroundColor: '#F4F1F4', border: '1px solid black', borderRadius: '10px', padding: 5,marginBottom: 10}}>
                                         <div>STATEMENT DATE</div>
                                         <div>{statement.statementDate}</div>
@@ -676,71 +665,72 @@ class ReportsPage extends React.Component {
                                     </div>
                                     <div style={{backgroundColor: 'rgba(249,159,67,1)', border: '1px solid black', borderRadius: '10px', padding: 5}}>
                                         <div>TOTAL</div>
-                                        <div>{statement.customerNumber}</div>
+                                        <div>${(statement.currentDue + statement.period1Due + statement.period2Due +
+                                            statement.period3Due + statement.period4Due).toFixed(2)}</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <table className="order-table">
-                            <thead>
-                                <tr>
-                                    <th style={{width: '40%'}}>Transaction Date</th>
-                                    <th style={{width: '40%'}}>Invoice No.</th>
-                                    <th style={{width: '40%'}}>Amount</th>
-                                    <th style={{width: '40%'}}>Balance</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    statement.invoices.map(invoice => {
-                                        let invdte = new Date(invoice.invoiceDate);
-                                        return (<tr onClick={() => {
-                                                wholePage.setState({curStatementInvoiceNumber: invoice.invoiceNumber})
-                                            }} className={curStatementInvoiceNumber === invoice.invoiceNumber ? 'selected-row' : ''}>
-                                            <td>{`${invdte.getMonth() + 1}/${invdte.getDate()}/${invdte.getFullYear()}`}</td>
-                                            <td>{invoice.invoiceNumber}</td>
-                                            <td>{invoice.invoiceAmount}</td>
-                                            <td>{invoice.invoiceBalance}</td>
-                                        </tr>);
-                                    })
-                                }
-                            </tbody>
-                        </table>
-                        <div className="row" style={{color: 'white', textAlign: 'center', marginLeft: 0, marginTop: 10}}>
-                            <div className="col-md-2">
-                                <div style={{backgroundColor: '#90001C', borderRadius: 10, marginBottom: 5}}>
-                                    CURRENT DUE<br/>
-                                    ${statement.currentDue.toFixed(2)}
+                        <div className="row" style={{marginTop: 10, alignItems: 'flex-start'}}>
+                            <table className="order-table col-md-10">
+                                <thead>
+                                    <tr>
+                                        <th style={{width: '40%'}}>Transaction Date</th>
+                                        <th style={{width: '40%'}}>Invoice No.</th>
+                                        <th style={{width: '40%'}}>Amount</th>
+                                        <th style={{width: '40%'}}>Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        statement.invoices.map(invoice => {
+                                            let invdte = new Date(invoice.invoiceDate);
+                                            return (<tr onClick={() => {
+                                                    wholePage.setState({curStatementInvoiceNumber: invoice.invoiceNumber})
+                                                }} className={curStatementInvoiceNumber === invoice.invoiceNumber ? 'selected-row' : ''}>
+                                                <td>{`${invdte.getMonth() + 1}/${invdte.getDate()}/${invdte.getFullYear()}`}</td>
+                                                <td>{invoice.invoiceNumber}</td>
+                                                <td>{invoice.invoiceAmount}</td>
+                                                <td>{invoice.invoiceBalance}</td>
+                                            </tr>);
+                                        })
+                                    }
+                                </tbody>
+                            </table>
+                            <div className="col-md-2" style={{color: 'white', textAlign: 'center', fontSize: '0.75rem', fontWeight: 900}}>
+                                <div className="">
+                                    <div style={{backgroundColor: '#90001C', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
+                                        CURRENT DUE<br/>
+                                        ${statement.currentDue.toFixed(2)}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="col-md-2">
-                                <div style={{backgroundColor: '#0000A5', borderRadius: 10, marginBottom: 5}}>
-                                    OVER {wholePage.state.period1}<br/>
-                                    ${statement.period1Due.toFixed(2)}
+                                <div className="">
+                                    <div style={{backgroundColor: '#0000A5', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
+                                        OVER {wholePage.state.period1}<br/>
+                                        ${statement.period1Due.toFixed(2)}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="col-md-2">
-                                <div style={{backgroundColor: '#0041C6', borderRadius: 10, marginBottom: 5}}>
-                                    OVER {wholePage.state.period2}<br/>
-                                    ${statement.period2Due.toFixed(2)}
+                                <div className="">
+                                    <div style={{backgroundColor: '#0041C6', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
+                                        OVER {wholePage.state.period2}<br/>
+                                        ${statement.period2Due.toFixed(2)}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="col-md-2">
-                                <div style={{backgroundColor: '#3680CE', borderRadius: 10, marginBottom: 5}}>
-                                    OVER {wholePage.state.period3}<br/>
-                                    ${statement.period3Due.toFixed(2)}
+                                <div className="">
+                                    <div style={{backgroundColor: '#3680CE', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
+                                        OVER {wholePage.state.period3}<br/>
+                                        ${statement.period3Due.toFixed(2)}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="col-md-2">
-                                <div style={{backgroundColor: '#669FCE', borderRadius: 10, marginBottom: 5}}>
-                                    OVER {wholePage.state.period4}<br/>
-                                    ${statement.period4Due.toFixed(2)}
+                                <div className="">
+                                    <div style={{backgroundColor: '#669FCE', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
+                                        OVER {wholePage.state.period4}<br/>
+                                        ${statement.period4Due.toFixed(2)}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="col-md-2">
-                                <div className="show-statement" style={{backgroundColor: 'white', color: 'blue', marginBottom: 5}}
-                                    onClick={() => {wholePage.onCurrentInvoiceChange(wholePage.state.curStatementInvoiceNumber)}}>
-                                    VIEW INVOICE
+                                <div className="">
+                                    <input type="button" style={{color: 'blue', width: '100%', paddingTop: 5, paddingBottom: 5}} value="VIEW INVOICE"
+                                        onClick={() => {wholePage.onCurrentInvoiceChange(wholePage.state.curStatementInvoiceNumber)}}/>
                                 </div>
                             </div>
                         </div>
@@ -750,10 +740,10 @@ class ReportsPage extends React.Component {
         }
 
         function Catalog() {
-            return catalogs === null ? (<div>)</div>) : (<div>
+            return catalogs === null ? (<div></div>) : (<div>
                 {
                     catalogs.map(catalog => {
-                        return catalog.length === 0 ? (<div></div>)
+                        return catalog.length === 0 ? <div></div>
                         : (<div style={{borderRadius: 15, border: '1px solid gray', textAlign: 'center',
                             padding: '15px', width: '70%', marginLeft: '15%', marginBottom: 15}}>
                             <div style={{height: '1em', marginBottom: '1em'}}> {catalog[0].TBLDESC} </div>
@@ -768,8 +758,8 @@ class ReportsPage extends React.Component {
                                     {
                                         catalog.map(item => {
                                             return (<tr>
-                                                <td style={{height: '2em', border: '1px solid black'}}>{item.DESCRIP}</td>
-                                                <td style={{height: '2em', border: '1px solid black'}}>{item.UNITMS}</td>
+                                                <td style={{height: '1em', border: '1px solid black'}}>{item.DESCRIP}</td>
+                                                <td style={{height: '1em', border: '1px solid black'}}>{item.UNITMS}</td>
                                             </tr>)
                                         })
                                     }
@@ -781,6 +771,100 @@ class ReportsPage extends React.Component {
             </div>);
         }
 
+        function printCatalog() {
+            let date = new Date();
+            let year = date.getFullYear(), month = date.getMonth() + 1, day = date.getDate();
+            let hour = date.getHours(), minute = date.getMinutes();
+
+            let printform = document.getElementById('printform');
+
+            printform.contentWindow.document.write('<HTML><head><title>Catalog</title></head>');
+            printform.contentWindow.document.write('<body>');
+            printform.contentWindow.document.write(`<div>Date: ${month < 10 ? '0' : ''}${month} / ${day < 10 ? '0' : ''}${day} / ${year}
+                ${hour < 10 ? '0' : ''}${hour}:${minute < 10 ? '0' : ''}${minute}</div>`);
+            printform.contentWindow.document.write(`<div style="text-align:center;">${userinfo.company}</div>`);
+
+            printform.contentWindow.document.write(document.getElementById('catalogView').innerHTML);
+
+            printform.contentWindow.document.write('</body></html>');
+
+            printform.contentWindow.document.close();
+            printform.contentWindow.focus();
+
+            printform.contentWindow.print();
+            printform.contentWindow.close();
+        }
+
+        function printStatement() {
+            let { statement, period1, period2, period3, period4, ageFrom } = wholePage.state;
+            if (statement === null)
+                return;
+
+            let totalDue = statement.currentDue + statement.period1Due + statement.period2Due + statement.period3Due + statement.period4Due;
+
+            let date = new Date();
+            let year = date.getFullYear(), month = date.getMonth() + 1, day = date.getDate();
+            let hour = date.getHours(), minute = date.getMinutes();
+
+            let printform = document.getElementById('printform');
+
+            printform.contentWindow.document.write('<HTML><head>');
+            printform.contentWindow.document.write(`<style>
+                    table, th, td {
+                        border: 1px solid gray;
+                        border-collapse: collapse;
+                        padding-left: 10px;
+                    }
+                    thead {
+                        background-color: black;
+                        color: white;
+                    }
+                </style>`);
+            printform.contentWindow.document.write('<title>Catalog</title></head>');
+            printform.contentWindow.document.write('<body style="padding:20px;">');
+            printform.contentWindow.document.write(`<div style="min-height:1em;text-align:center;">${userinfo.custno}</div>`);
+            printform.contentWindow.document.write(`<div style="min-height:1em;text-align:center;">Statement of Account</div>`);
+            printform.contentWindow.document.write(`<div style="min-height:1em;text-align:center;">Statement Date: ${month < 10 ? '0' : ''}${month}/${day < 10 ? '0' : ''}${day}/${year}</div>`);
+            printform.contentWindow.document.write(`<div style="min-height:1em;text-align:center;">Age From : ${ageFrom === 'due' ? 'Due Date' : 'Invoice Date'}
+                | Breakdown: ${period1}, ${period2}, ${period3}, ${period4}
+                </div>`);
+                
+            printform.contentWindow.document.write(`<div style="border: 1px solid black;border-radius: 5px;padding: 15;margin-top: 20;">
+                    BILL TO
+                    <div>${statement.billingCompany}</div>
+                    <div>${statement.billingAddress1}</div>
+                    <div>${statement.billingAddress2}</div>
+                    <div>${statement.billingCity} ${statement.billingState} ${statement.billingZip}</div>
+                </div>`);
+
+            printform.contentWindow.document.write(`<table style="width: 100%;margin-top: 20px;">`);
+            printform.contentWindow.document.write(`<thead><tr><td>Transaction Date</td><td>Invoice No</td><td>Amount</td><td>Balance</td></tr></thead>`);
+            printform.contentWindow.document.write(`<tbody>`)
+            statement.invoices.map(invoice => {
+                let invdte = new Date(invoice.invoiceDate);
+                printform.contentWindow.document.write(`<tr>`);
+                printform.contentWindow.document.write(`<td>${invdte.getMonth() < 10 ? '0' : ''}${invdte.getMonth()}/${invdte.getDate() < 10 ? '0' : ''}${invdte.getDate()}/${invdte.getFullYear()}</td>`);
+                printform.contentWindow.document.write(`<td>${invoice.invoiceNumber}</td>`);
+                printform.contentWindow.document.write(`<td>${invoice.invoiceAmount.toFixed(2)}</td>`);
+                printform.contentWindow.document.write(`<td>${invoice.invoiceBalance.toFixed(2)}</td>`);
+                printform.contentWindow.document.write(`</tr>`);
+            });
+            printform.contentWindow.document.write(`<tr style="background-color: #DDDDDD;color: white;"><td colspan=3>Current Due</td><td>${statement.currentDue.toFixed(2)}</td></tr>`);
+            printform.contentWindow.document.write(`<tr style="background-color: #DDDDDD;color: white;"><td colspan=3>OVER ${period1}</td><td>${statement.period1Due.toFixed(2)}</td></tr>`);
+            printform.contentWindow.document.write(`<tr style="background-color: #DDDDDD;color: white;"><td colspan=3>OVER ${period2}</td><td>${statement.period2Due.toFixed(2)}</td></tr>`);
+            printform.contentWindow.document.write(`<tr style="background-color: #DDDDDD;color: white;"><td colspan=3>OVER ${period3}</td><td>${statement.period3Due.toFixed(2)}</td></tr>`);
+            printform.contentWindow.document.write(`<tr style="background-color: #DDDDDD;color: white;"><td colspan=3>OVER ${period4}</td><td>${statement.period4Due.toFixed(2)}</td></tr>`);
+            printform.contentWindow.document.write(`<tr style="background-color: #000000;color: white;"><td colspan=3>Total Due</td><td>${totalDue.toFixed(2)}</td></tr>`);
+            printform.contentWindow.document.write(`</tbody></table>`);
+            printform.contentWindow.document.write('</body></html>');
+
+            printform.contentWindow.document.close();
+            printform.contentWindow.focus();
+
+            printform.contentWindow.print();
+            printform.contentWindow.close();
+        }
+
         function ReportBody() {
             if (currentTab === 0)
                 return <ViewInvoice/>
@@ -790,13 +874,22 @@ class ReportsPage extends React.Component {
                 return <DetailInvoice/>
             else if (currentTab === 3)
                 return <Statement/>
-            else
-                return <Catalog/>
+            else {
+                return <div>
+                    <div style={{textAlign: 'center', marginBottom: 15}}>
+                        <input type="button"value="PRINT CATALOG" onClick={() => {printCatalog()}}/>
+                    </div>
+                    <div id="catalogView">
+                        <Catalog/>
+                    </div>
+                </div>
+            }
         }
 
         return (
             <div>
                 <Header currentPage={2}/>
+                <iframe id="printform" style={{display: 'block', width: '100%'}}/>
                 <div className="page" style={{fontSize: '1rem', borderTop: '2px solid #F4F1F4'}}>
                     <div className="row sub-header">
                         <div className={`sub-header-tab${currentTab === 0 ? '-active' : ''}`}
@@ -827,7 +920,7 @@ class ReportsPage extends React.Component {
                     </div>
                     <div style={{width: '100%', marginTop: 20, padding: 15, alignItems: 'center'}}>
                         {
-                            isloading === true ? <div class="text-center" style={{marginTop: '10%'}}>
+                            isloading === true ? <div className="text-center" style={{marginTop: '10%'}}>
                                 Loading Data. Please wait...
                             </div> : <ReportBody/>
                         }

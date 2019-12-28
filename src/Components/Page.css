@@ -22,26 +22,27 @@
     color: blue;
 }
 
+input[type=button] {
+    background-image: linear-gradient(to bottom, white, lightgray) !important;
+    border: 0.5px solid #111111;
+    border-radius: 2px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
 .row {
     align-items: center;
 }
 
 .input-caption {
     font-weight: 700;
-    font-size: 0.625rem;
+    font-size: 0.75rem;
 }
 
 .form-item {
     padding: 10px;
-}
-
-input {
-    border-radius: 5px;
-}
-
-.date-picker {
-    background-color: #F6F2F6;
-    height: 20px;
 }
 
 .ship-to {
@@ -95,8 +96,6 @@ table {
 }
 
 .order-table{
-    display: block;
-    height: 400px;
     overflow-y: scroll;
     border: 2px solid #C2808C;
 }
@@ -125,10 +124,21 @@ table {
 
 /* customized dropdown */
 
-.Dropdown-root {
-    width: 35%;
-    display: inline-grid;
+
+.Dropdown-control {
+    line-height: 1em;
+    height: 2em;
 }
+
+.calendar-width-fix {
+    width: 100%;
+}
+
+.margin-bottom-5 {
+    margin-bottom: 5px;
+}
+
+/*
 
 .Dropdown-placeholder,.Dropdown-option {
     font-size: 0.7rem;
@@ -149,9 +159,7 @@ table {
     border-radius: 5px;
 }
 
-/* shape menu like a comment */
 .Dropdown-menu {
-    /*margin-top: 26px !important;*/
     margin-top: 5px;
     background: #354960  !important;
     border-radius: 5px  !important;
@@ -169,20 +177,6 @@ table {
     background-color: #555555;
 }
 
-.Dropwdown-menu:before {
-    content: '';
-    /*margin: none;
-    content: ""  !important;
-    position: absolute  !important;
-    right: -60%  !important;
-    top: -50%  !important;
-    width: 0  !important;
-    height: 0  !important;
-    border-right: 13px solid transparent  !important;
-    border-bottom: 26px solid #354960  !important;
-    border-left: 13px solid transparent  !important;*/
-}
-
 .Dropdown-option:hover {
     background-color: #354960 !important;
 }
@@ -190,6 +184,7 @@ table {
 .Dropdown-option.is-selected{
     background-color: #18BEA0 !important;
 }
+*/
 
 
 /*--------------------------- Order Page ----------------------------*/

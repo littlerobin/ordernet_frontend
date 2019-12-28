@@ -4,7 +4,8 @@
 }
 
 .tab-header :hover {
-    cursor: default;
+    cursor: pointer;
+    text-decoration: none;
 }
 
 .tab-header-button {
@@ -36,7 +37,8 @@
 }
 
 a, a:visited, a:hover, a:active {
-    color: inherit;
+    color: black;
+    cursor: pointer;
     text-decoration: none;
 }
 
