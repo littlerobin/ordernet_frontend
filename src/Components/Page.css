@@ -117,8 +117,12 @@ table {
     background: #F6F2F6;
 }
 
+.order-table tr:nth-child(even) {
+    background: #FFFFFF;
+}
+
 .order-table th:last-of-type {
-    border-right:none;
+    border-right: none;
     border-bottom: 1.5px solid #C2808C;
 }
 

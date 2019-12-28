@@ -551,25 +551,35 @@ class ReportsPage extends React.Component {
                         SHOW INVOICES
                     </div>*/}
                     {
-                        (detail === null || detail.invoices.length === 0) ? (<div></div>) : (<div style={{border: '1px solid gray', paddingLeft: 30, paddingRight: 30,
-                            marginLeft: 15, borderRadius: 10, backgroundColor: 'rgba(249,159,67,1)'}}>
-                            TOTAL ${detail.allInvoicesTotal}
+                        (detail === null || detail.invoices.length === 0) ? (<div></div>) : (<div>
+                            <input type="button" value="PRINT" style={{marginLeft: 15}} onClick={() => {printDetailInvoice()}} />
+                            <span style={{border: '1px solid gray', paddingLeft: 30, paddingRight: 30,
+                                marginLeft: 15, borderRadius: 10, backgroundColor: 'rgba(249,159,67,1)'}}>
+                                TOTAL ${detail.allInvoicesTotal.toFixed(2)}
+                            </span>
                         </div>)
                     }
                 </div>
                 {
                     (detail === null || detail.invoices.length === 0) ? (<div>{ detail !== null && <div style={{textAlign: 'center', marginTop: 35}}>No Result</div>}</div>) : (<div>
-                        <div style={{textAlign: 'center'}}>
+                        <div style={{textAlign: 'center', height: 700, overflowY: 'scroll'}}>
                             {
-                                detail.invoices.map(invoice => {
+                                detail.invoices.map((invoice, index) => {
                                     let invDate = new Date(invoice.invoiceDate);
-                                    return (<div>
-                                        <div style={{backgroundColor: 'lightgray'}}>
-                                            Invoice No.{invoice.invoiceNumber} - Date:{(invDate.getMonth() + 1) < 10 ? '0' : ''}{invDate.getMonth() + 1}
+                                    return (<div style={{backgroundColor: index % 2 === 0 ? "#00008B" : "#800080", marginTop: 15, padding: 15, borderRadius: 15}}>
+                                        <div style={{color: 'white', fontWeight: 900}}>
+                                            <span style={{float: 'left'}}>Invoice # {invoice.invoiceNumber}</span>
+                                            <span style={{textAlign: 'center'}}>
+                                                {(invDate.getMonth() + 1) < 10 ? '0' : ''}{invDate.getMonth() + 1}
                                                 /{invDate.getDate() < 10 ? '0' : ''}{invDate.getDate()}
                                                 /{invDate.getFullYear()}
+                                            </span>
+                                            <span>
+                                                <input type="button" value="VIEW INVOICE" style={{float: 'right'}}
+                                                    onClick={() => {wholePage.onCurrentInvoiceChange(invoice.invoiceNumber)}}/>
+                                            </span>
                                         </div>
-                                        <table className="order-table" style={{width: '100%', textAlign: 'left', marginTop: 15}}>
+                                        <table className="order-table" style={{width: '100%', textAlign: 'left'}}>
                                             <thead>
                                                 <tr style={{backgroundColor: 'black'}}>
                                                     <th style={{width: '25%', border: '1px solid gray'}}>Item</th>
@@ -585,22 +595,20 @@ class ReportsPage extends React.Component {
                                                         return (<tr>
                                                             <td style={{border: '1px solid gray'}}>{product.item}</td>
                                                             <td style={{border: '1px solid gray'}}>{product.description}</td>
-                                                            <td style={{border: '1px solid gray'}}>{product.price1}</td>
+                                                            <td style={{border: '1px solid gray'}}>{product.price1.toFixed(2)}</td>
                                                             <td style={{border: '1px solid gray'}}>{product.quantity}</td>
                                                             <td style={{border: '1px solid gray'}}>{(product.price1 * product.quantity).toFixed(2)}</td>
                                                         </tr>)
                                                     })
                                                 }
-                                                <tr style={{backgroundColor: 'black', color: 'white'}}>
-                                                    <td colSpan="4" style={{border: '1px solid gray'}}>Total</td>
-                                                    <td style={{border: '1px solid gray'}}>{invoice.invoiceAmount}</td>
-                                                </tr>
                                             </tbody>
                                         </table>
+                                        <div style={{fontWeight: 700, textAlign: 'right', paddingRight: 40, color: 'white'}}>
+                                            TOTAL {invoice.invoiceAmount.toFixed(2)}
+                                        </div>
                                     </div>)
                                 })
                             }
-                            <div style={{backgroundColor: 'black', color: 'white'}}>ALL INVOICES TOTAL ${detail.allInvoicesTotal}</div>
                         </div>
                     </div>)
                 }
@@ -778,11 +786,24 @@ class ReportsPage extends React.Component {
 
             let printform = document.getElementById('printform');
 
-            printform.contentWindow.document.write('<HTML><head><title>Catalog</title></head>');
+            printform.contentWindow.document.write('<HTML style="-webkit-print-color-adjust: exact;"><head>');
+            printform.contentWindow.document.write(`<style>
+                    table, th, td {
+                        border: 1px solid gray;
+                        border-collapse: collapse;
+                        padding-left: 10px;
+                    }
+                    thead {
+                        background-color: black;
+                        color: white;
+                    }
+                </style>`);
+            printform.contentWindow.document.write('</head>');
             printform.contentWindow.document.write('<body>');
             printform.contentWindow.document.write(`<div>Date: ${month < 10 ? '0' : ''}${month} / ${day < 10 ? '0' : ''}${day} / ${year}
                 ${hour < 10 ? '0' : ''}${hour}:${minute < 10 ? '0' : ''}${minute}</div>`);
             printform.contentWindow.document.write(`<div style="text-align:center;">${userinfo.company}</div>`);
+            printform.contentWindow.document.write(`<div style="text-align:center;">CATALOG</div>`);
 
             printform.contentWindow.document.write(document.getElementById('catalogView').innerHTML);
 
@@ -808,7 +829,7 @@ class ReportsPage extends React.Component {
 
             let printform = document.getElementById('printform');
 
-            printform.contentWindow.document.write('<HTML><head>');
+            printform.contentWindow.document.write('<HTML style="-webkit-print-color-adjust: exact;"><head>');
             printform.contentWindow.document.write(`<style>
                     table, th, td {
                         border: 1px solid gray;
@@ -820,7 +841,7 @@ class ReportsPage extends React.Component {
                         color: white;
                     }
                 </style>`);
-            printform.contentWindow.document.write('<title>Catalog</title></head>');
+            printform.contentWindow.document.write('</head>');
             printform.contentWindow.document.write('<body style="padding:20px;">');
             printform.contentWindow.document.write(`<div style="min-height:1em;text-align:center;">${userinfo.custno}</div>`);
             printform.contentWindow.document.write(`<div style="min-height:1em;text-align:center;">Statement of Account</div>`);
@@ -856,6 +877,72 @@ class ReportsPage extends React.Component {
             printform.contentWindow.document.write(`<tr style="background-color: #DDDDDD;color: white;"><td colspan=3>OVER ${period4}</td><td>${statement.period4Due.toFixed(2)}</td></tr>`);
             printform.contentWindow.document.write(`<tr style="background-color: #000000;color: white;"><td colspan=3>Total Due</td><td>${totalDue.toFixed(2)}</td></tr>`);
             printform.contentWindow.document.write(`</tbody></table>`);
+            printform.contentWindow.document.write('</body></html>');
+
+            printform.contentWindow.document.close();
+            printform.contentWindow.focus();
+
+            printform.contentWindow.print();
+            printform.contentWindow.close();
+        }
+
+        function printDetailInvoice() {
+            console.log(userinfo);
+            let { detail, fromDate, toDate } = wholePage.state;
+            if (detail === null || detail.invoices.length === 0)
+                return;
+
+            let printform = document.getElementById('printform');
+
+            printform.contentWindow.document.write('<HTML style="-webkit-print-color-adjust: exact;"><head>');
+            printform.contentWindow.document.write(`<style>
+                    table, th, td {
+                        border: 1px solid gray;
+                        border-collapse: collapse;
+                        padding-left: 10px;
+                    }
+                </style>`);
+            printform.contentWindow.document.write('</head>');
+            printform.contentWindow.document.write('<body style="padding:20px;">');
+            printform.contentWindow.document.write(`<div style="min-height:1em;text-align:center;">${userinfo.company}</div>`);
+            printform.contentWindow.document.write(`<div style="min-height:1em;text-align:center;">Detail Invoice Register</div>`);
+            printform.contentWindow.document.write(`<div style="min-height:1em;text-align:center;">
+                    Invoices From: ${(fromDate.getMonth()+1) < 10 ? '0' : ''}${(fromDate.getMonth()+1)}/${fromDate.getDate() < 10 ? '0' : ''}${fromDate.getDate()}/${fromDate.getFullYear()}
+                    To: ${(toDate.getMonth()+1) < 10 ? '0' : ''}${(toDate.getMonth()+1)}/${toDate.getDate() < 10 ? '0' : ''}${toDate.getDate()}/${toDate.getFullYear()}
+                </div>`);
+            printform.contentWindow.document.write(`<div style="min-height:1em;text-align:center;">Active Invoices</div>`);
+            
+            detail.invoices.map(invoice => {
+                let invDate = new Date(invoice.invoiceDate);
+
+                printform.contentWindow.document.write(`<div style="background: gray; margin-top: 15px;">`);
+                printform.contentWindow.document.write(`<div style="width: 100%;text-align: center;">Invoice No. ${invoice.invoiceNumber}
+                    - Date ${(invDate.getMonth() + 1) < 10 ? '0' : ''}${invDate.getMonth() + 1}
+                    /${invDate.getDate() < 10 ? '0' : ''}${invDate.getDate()}
+                    /${invDate.getFullYear()}</div>`);
+                printform.contentWindow.document.write(`<table style="background-color: white;width: 100%;">`);
+                printform.contentWindow.document.write(`<thead style="background-color: black;color: white;"><tr><td>Item</td><td>Description</td><td>Price</td>
+                    <td>Cost</td><td>Qty Ship</td><td>Ext Price</td></tr></thead>`);
+                printform.contentWindow.document.write(`<tbody>`);
+                invoice.products.map(product => {
+                    printform.contentWindow.document.write(`<tr>`);
+                    printform.contentWindow.document.write(`<td>${product.item}</td>`);
+                    printform.contentWindow.document.write(`<td>${product.description}</td>`);
+                    printform.contentWindow.document.write(`<td>$${product.price1.toFixed(2)}</td>`);
+                    printform.contentWindow.document.write(`<td>${product.cost}</td>`);
+                    printform.contentWindow.document.write(`<td>${product.quantity}</td>`);
+                    printform.contentWindow.document.write(`<td>${(product.price1 * product.quantity).toFixed(2)}</td>`);
+                    printform.contentWindow.document.write(`</tr>`);
+                });
+                printform.contentWindow.document.write(`<tr style="background: black; color: white;">`);
+                printform.contentWindow.document.write(`<td colspan=5>Total</td>`);
+                printform.contentWindow.document.write(`<td>$${invoice.invoiceAmount.toFixed(2)}</td>`);
+                printform.contentWindow.document.write(`</tr>`);
+                printform.contentWindow.document.write(`</tbody>`);
+                printform.contentWindow.document.write(`</table>`);
+                printform.contentWindow.document.write(`</div>`);
+            });
+            printform.contentWindow.document.write(`<div style="align-text: center;margin-top: 15px;background: black;color: white;">ALL INVOICES TOTAL $${detail.allInvoicesTotal.toFixed(2)}</div>`);
             printform.contentWindow.document.write('</body></html>');
 
             printform.contentWindow.document.close();
