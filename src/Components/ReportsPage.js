@@ -26,7 +26,7 @@ class ReportsPage extends React.Component {
             username: cookie.get('ordernet_username'),
             password: cookie.get('ordernet_password'),
             customerNumber: cookie.get('ordernet_customerNumber'),
-            currentTab: 1,
+            currentTab: 0,
             catalogs: null,
 
             statement: null,
