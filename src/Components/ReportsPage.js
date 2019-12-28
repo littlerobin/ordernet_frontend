@@ -17,6 +17,7 @@ class ReportsPage extends React.Component {
     toDateRef = null;
     fromSummaryRef = null;
     toSummaryRef = null;
+    currentInvInputRef = null;
 
     constructor(props) {
         super(props);
@@ -25,7 +26,7 @@ class ReportsPage extends React.Component {
             username: cookie.get('ordernet_username'),
             password: cookie.get('ordernet_password'),
             customerNumber: cookie.get('ordernet_customerNumber'),
-            currentTab: 2,
+            currentTab: 1,
             catalogs: null,
 
             statement: null,
@@ -249,7 +250,7 @@ class ReportsPage extends React.Component {
         })
         .then((res) => {
             let currentinvoice = res.data.selectedinvoice;
-            this.setState({currentinvno: currentinvno, currentinvoice: currentinvoice, currentTab: 0});
+            this.setState({currentinvno: currentinvoice.invoiceNumber, currentinvoice: currentinvoice, currentTab: 0});
         })
         .catch((err) => {
             console.log(err);
@@ -258,7 +259,20 @@ class ReportsPage extends React.Component {
         this.setState({isloading: false});
     }
 
+    onFindCurrentInvoice() {
+        if (this.currentInvInputRef === null)
+            return;
+
+        let invInput = this.currentInvInputRef.value;
+        if (invInput === null || invInput === "")
+            return;
+
+        this.getOneInvoice(invInput);
+    }
+
     onCurrentInvoiceChange(newInvoiceNumber) {
+        console.log(newInvoiceNumber);
+
         if (newInvoiceNumber === null)
             return;
         this.getOneInvoice(newInvoiceNumber);
@@ -295,12 +309,18 @@ class ReportsPage extends React.Component {
             })
 
             return (<div>
-                <div className="" style={{marginLeft: 0, marginBottom: 15, display: "inline-flex", alignItems: "center"}}>
-                    <Dropdown options={invoicelist} value={currentinvno} placeholder='Select Invoice'
-                        onChange={newInv => {wholePage.onCurrentInvoiceChange(newInv.value);}}/>
+                <div className="" style={{width: "100%", marginLeft: 0, marginBottom: 15, display: "inline-flex", alignItems: "center"}}>
+                    <div style={{width: "35%"}}>
+                        <Dropdown options={invoicelist} value={currentinvno} placeholder='Select Invoice'
+                            onChange={newInv => {wholePage.onCurrentInvoiceChange(newInv.value);}}/>
+                    </div>
                     <span style={{width: '5%', textAlign: 'center', marginLeft: 5, marginRight: 5}}>OR</span>
-                    <input type="text" placeholder="Enter Invoice Number" style={{width:'45%', marginRight: 10}}/>
-                    <input type="button" value="GO"/>
+                    <input type="text" placeholder="Enter Invoice Number"
+                        ref={inputItem => {wholePage.currentInvInputRef = inputItem}} style={{width:'35%', marginRight: 10}}/>
+                    <input type="button" value="GO" onClick={() => {wholePage.onFindCurrentInvoice()}}/>
+                    {
+                        currentinvoice !== null && <input type="button" style={{marginLeft: 25}} value="PRINT INVOICE" onClick={() => {printCurrentInvoice()}}/>
+                    }
                 </div>
                 {
                     currentinvoice === null ? (<div></div>) : (
@@ -317,7 +337,7 @@ class ReportsPage extends React.Component {
                                 </div>
                                 <div className="col-md-5" style={{}}>
                                     <div className="ship-to">
-                                        <div className="text-default"><b>SHIP TO</b></div>
+                                        <div className="text-default"><b>BILL TO</b></div>
                                         <div className="text-default">{currentinvoice.billingCompany}</div>
                                         <div className="text-default">{currentinvoice.billingAddress1}</div>
                                         <div className="text-default">{currentinvoice.billingAddress2}</div>
@@ -339,7 +359,7 @@ class ReportsPage extends React.Component {
                                     </div>
                                 </div>
                                 <div className="col-md-10">
-                                    <table className="order-table">
+                                    <table className="order-table" style={{height: 600, display: 'block', emptyCells: 'show'}}>
                                         <thead>
                                             <tr>
                                                 <th style={{width: '10%'}}>Quantity</th>
@@ -400,16 +420,17 @@ class ReportsPage extends React.Component {
                                         </div>
                                     </div>
                                     <div className="" style={{marginTop: 5, color: 'white'}}>
-                                        <div style={{width: '100%', backgroundColor: 'rgba(181, 138, 0, 1)', padding: 10, border: '1px solid gray', borderRadius: 10}}>
+                                        <div style={{width: '100%', backgroundColor: 'rgba(181, 138, 0, 1)', fontSize: "0.75rem",
+                                            padding: 10, border: '1px solid gray', borderRadius: 10}}>
                                             ORDER TOTALS<br/>
                                             Non-Taxable Subtotal<br/>
-                                            { currentinvoice.subtotal === null ? 0 : currentinvoice.subtotal }
+                                            ${ currentinvoice.subtotal === null ? 0 : currentinvoice.subtotal }<br/>
                                             Taxable Subtotal<br/>
-                                            { currentinvoice.taxableSubtotal === null ? 0 : currentinvoice.taxableSubtotal }
+                                            ${ currentinvoice.taxableSubtotal === null ? 0 : currentinvoice.taxableSubtotal }<br/>
                                             Tax<br/>
-                                            { currentinvoice.taxRate === null ? 0 : currentinvoice.taxRate }
+                                            %{ currentinvoice.taxRate === null ? 0 : currentinvoice.taxRate }<br/>
                                             Total Order<br/>
-                                            { currentinvoice.total === null ? 0 : currentinvoice.total }
+                                            ${ currentinvoice.total === null ? 0 : currentinvoice.total }
                                         </div>
                                     </div>
                                 </div>
@@ -448,6 +469,10 @@ class ReportsPage extends React.Component {
                         <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.toDateRef.setOpen(true);}}/>
                     </div>
                     <input type="button" value="SHOW INVOICE SUMMARY" onClick={() => {wholePage.getInvoiceSummary()}}/>
+                    {
+                        summary !== null && summary.invoices.length > 0 && <input type="button" style={{marginLeft: 10}} 
+                            value="PRINT SUMMARY" onClick={() => {printInvoiceSummary()}}/>
+                    }
                     {/*<div className="show-statement" style={{textAlign: 'center', marginTop: 20, marginBottom: 20,
                         padding: 15, width: 'fit-content', alignItems: 'center'}}
                         onClick={() => {wholePage.getInvoiceSummary();}}>
@@ -455,7 +480,7 @@ class ReportsPage extends React.Component {
                     </div>*/}
                 </div>
                 {
-                    summary === null ? (<div></div>) : (<div className="row" style={{alignItems: 'end'}}>
+                    (summary === null || summary.invoices.length === 0) ? (<div></div>) : (<div className="row" style={{alignItems: 'end', marginTop: 15}}>
                         <table className="order-table col-md-10" style={{height: 600, display: 'block', emptyCells: 'show'}}>
                             <thead>
                                 <tr>
@@ -491,14 +516,14 @@ class ReportsPage extends React.Component {
                                 <div style={{fontSize: '0.875rem', border: '1px solid gray', borderRadius: 10, color: 'white',
                                     backgroundColor: 'rgba(249,159,67,1)', padding: 5, textAlign: 'center'}}>
                                     INVOICES TOTAL<br/>
-                                    {summary.allInvoicesTotal}
+                                    ${summary.allInvoicesTotal.toFixed(2)}
                                 </div>
                             </div>
                             <div style={{width: '100%', marginBottom: 5}}>
                                 <div style={{fontSize: '0.875rem', border: '1px solid gray', borderRadius: 10,
                                     backgroundColor: '#F4F1F4', padding: 5, textAlign: 'center'}}>
                                     SALES TAX TOTAL<br/>
-                                    {summary.allInvoicesTotal}
+                                    ${summary.allTaxTotal.toFixed(2)}
                                 </div>
                             </div>
                             <input type="button" style={{width: '100%', color: 'blue'}} value="VIEW INVOICE"
@@ -887,7 +912,6 @@ class ReportsPage extends React.Component {
         }
 
         function printDetailInvoice() {
-            console.log(userinfo);
             let { detail, fromDate, toDate } = wholePage.state;
             if (detail === null || detail.invoices.length === 0)
                 return;
@@ -952,6 +976,201 @@ class ReportsPage extends React.Component {
             printform.contentWindow.close();
         }
 
+        function printInvoiceSummary() {
+            let { fromSummary, toSummary, summary } = wholePage.state;
+            if ( summary === null || summary.invoices.length === 0) return;
+
+            let printform = document.getElementById('printform');
+
+            printform.contentWindow.document.write('<HTML style="-webkit-print-color-adjust: exact;"><head>');
+            printform.contentWindow.document.write(`<style>
+                    table, th, td {
+                        border: 1px solid gray;
+                        border-collapse: collapse;
+                        padding-left: 10px;
+                    }
+                </style>`);
+            printform.contentWindow.document.write('</head>');
+            printform.contentWindow.document.write('<body style="padding:20px;">');
+            printform.contentWindow.document.write(`<div style="min-height:1em;text-align:center;">${userinfo.company}</div>`);
+            printform.contentWindow.document.write(`<div style="min-height:1em;text-align:center;">Summary Invoice Register</div>`);
+            printform.contentWindow.document.write(`<div style="min-height:1em;text-align:center;">
+                    Invoices From: ${(fromSummary.getMonth()+1) < 10 ? '0' : ''}${(fromSummary.getMonth()+1)}/${fromSummary.getDate() < 10 ? '0' : ''}${fromSummary.getDate()}/${fromSummary.getFullYear()}
+                    To: ${(toSummary.getMonth()+1) < 10 ? '0' : ''}${(toSummary.getMonth()+1)}/${toSummary.getDate() < 10 ? '0' : ''}${toSummary.getDate()}/${toSummary.getFullYear()}
+                </div>`);
+            printform.contentWindow.document.write(`<div style="min-height:1em;text-align:center;">Active Invoices</div>`);
+            
+            printform.contentWindow.document.write(`
+                    <table style="width: 100%; margin-top: 15px;">
+                        <thead style="background: black; color: white;">
+                            <tr>
+                                <th>Inv No.</th>
+                                <th>Order No.</th>
+                                <th>Inv Date</th>
+                                <th>Customer No.</th>
+                                <th>Ship To</th>
+                                <th>Inv Total</th>
+                                <th>Sales Tax</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `);
+
+            summary.invoices.map(invoice => {
+                let invDate = new Date(invoice.invoiceDate);
+
+                printform.contentWindow.document.write(`
+                    <tr>
+                        <td>${invoice.invoiceNumber}</td>
+                        <td>${invoice.orderNumber}</td>
+                        <td>${(invDate.getMonth() + 1) < 10 ? '0' : ''}${invDate.getMonth() + 1}
+                        /${invDate.getDate() < 10 ? '0' : ''}${invDate.getDate()}
+                        /${invDate.getFullYear()}</td>
+                        <td>${invoice.customerNumber}</td>
+                        <td>${invoice.shippingCompany}</td>
+                        <td>$${invoice.invoiceAmount.toFixed(2)}</td>
+                        <td>$${invoice.tax.toFixed(2)}</td>
+                    </tr>
+                `);
+            });
+
+            printform.contentWindow.document.write(`
+                <tr style="background: black; color: white;">
+                    <td colspan=5>Total</td>
+                    <td>$${summary.allInvoicesTotal.toFixed(2)}</td>
+                    <td>$${summary.allTaxTotal.toFixed(2)}</td>
+                </tr>
+            `);
+
+            printform.contentWindow.document.write(`
+                        </tbody>
+                    </table>
+            `);
+
+            
+            printform.contentWindow.document.write('</body></html>');
+
+            printform.contentWindow.document.close();
+            printform.contentWindow.focus();
+
+            printform.contentWindow.print();
+            printform.contentWindow.close();
+        }
+
+        function printCurrentInvoice() {
+            let { currentinvoice } = wholePage.state;
+            let invDate = new Date(currentinvoice);
+            let day = invDate.getDate(), month = invDate.getMonth() + 1, year = invDate.getFullYear();
+
+            let printform = document.getElementById('printform');
+
+            printform.contentWindow.document.write('<HTML style="-webkit-print-color-adjust: exact;"><head>');
+            printform.contentWindow.document.write(`<style>
+                    table, th, td {
+                        border: 1px solid gray;
+                        border-collapse: collapse;
+                        padding-left: 10px;
+                    }
+                </style>`);
+            printform.contentWindow.document.write('</head>');
+            printform.contentWindow.document.write('<body style="padding:20px;">');
+
+            printform.contentWindow.document.write(`<div style="width: 100%;display: flex">`);
+
+            printform.contentWindow.document.write(`<div style="width: 50%;margin-top: 15px;">`);
+            printform.contentWindow.document.write(`<div>Invoice No. ${currentinvoice.invoiceNumber}</div>`);
+            printform.contentWindow.document.write(`<div>Invoice Date: ${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}/${year}</div>`);
+            printform.contentWindow.document.write(`<div>Customer No. ${currentinvoice.customerNumber}</div>`);
+            printform.contentWindow.document.write(`<div>Customer PO No. ${currentinvoice.poNumber}</div>`);
+            printform.contentWindow.document.write(`</div>`);
+
+            printform.contentWindow.document.write(`<div style="width: 50%;text-align:right;">`);
+            printform.contentWindow.document.write(`<div>FOB: ${currentinvoice.fob === null ? '' : currentinvoice.fob}</div>`);          
+            printform.contentWindow.document.write(`<div>SLSM: ${currentinvoice.slsm}</div>`);
+            printform.contentWindow.document.write(`<div>Ship Via: ${currentinvoice.shipVia}</div>`);
+            printform.contentWindow.document.write(`<div>TERMS: ${currentinvoice.terms}</div>`);
+            printform.contentWindow.document.write(`</div>`);
+
+            printform.contentWindow.document.write(`</div>`);
+
+            printform.contentWindow.document.write(`<div style="width: 100%;display:flex;">`);
+
+            printform.contentWindow.document.write(`<div style="padding: 15px;width: 45%;border: 1px solid black;border-radius:15px">`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">SHIP TO</div>`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">${currentinvoice.shippingCompany}</div>`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">${currentinvoice.shippingAddress1}</div>`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">${currentinvoice.shippingAddress2}</div>`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">${currentinvoice.shippingCity} ${currentinvoice.shippingState} ${currentinvoice.shippingZip}</div>`);
+            printform.contentWindow.document.write(`</div>`);
+            
+            printform.contentWindow.document.write(`<div style="padding: 15px;width: 45%;border: 1px solid black;border-radius:15px">`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">BILL TO</div>`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">${currentinvoice.billingCompany}</div>`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">${currentinvoice.billingAddress1}</div>`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">${currentinvoice.billingAddress2}</div>`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">${currentinvoice.billingCity} ${currentinvoice.billingState} ${currentinvoice.billingZip}</div>`);
+            printform.contentWindow.document.write(`</div>`);
+
+            printform.contentWindow.document.write(`</div>`);
+
+            printform.contentWindow.document.write(`
+                    <table style="margin-top: 15px;width:100%;">
+                        <thead style="background: black; color: white;">
+                            <tr>
+                                <th>Qty</th>
+                                <th>Item</th>
+                                <th>Description</th>
+                                <th>U/M</th>
+                                <th>Price</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `);
+
+            currentinvoice.products.map(product => {
+                printform.contentWindow.document.write(`
+                    <tr>
+                        <td>${product.quantity}</td>
+                        <td>${product.item}</td>
+                        <td>${product.description}</td>
+                        <td></td>
+                        <td>${product.price1}</td>
+                        <td>${product.quantity * product.price1}</td>
+                    </tr>
+                `);
+            })
+
+            printform.contentWindow.document.write(`
+                        <tr>
+                            <td colspan=5>Non-Taxable Subtotal</td>
+                            <td>$${ currentinvoice.subtotal === null ? 0 : currentinvoice.subtotal }</td>
+                        </tr>
+                        <tr>
+                            <td colspan=5>Taxable Subtotal</td>
+                            <td>$${ currentinvoice.taxableSubtotal === null ? 0 : currentinvoice.taxableSubtotal }</td>
+                        </tr>
+                        <tr>
+                            <td colspan=5>Tax</td>
+                            <td>%${ currentinvoice.taxRate === null ? 0 : currentinvoice.taxRate }</td>
+                        </tr>
+                        <tr style="background: black;color: white">
+                            <td colspan=5>Total</td>
+                            <td>$${ currentinvoice.total === null ? 0 : currentinvoice.total }</td>
+                        </tr>
+                        </tbody>
+                    </table>
+            `);
+
+            printform.contentWindow.document.write('</body></html>');
+
+            printform.contentWindow.document.close();
+            printform.contentWindow.focus();
+
+            printform.contentWindow.print();
+            printform.contentWindow.close();
+        }
+
         function ReportBody() {
             if (currentTab === 0)
                 return <ViewInvoice/>
@@ -976,7 +1195,7 @@ class ReportsPage extends React.Component {
         return (
             <div>
                 <Header currentPage={2}/>
-                <iframe id="printform" style={{display: 'block', width: '100%'}}/>
+                <iframe id="printform" style={{display: 'none', width: '100%'}}/>
                 <div className="page" style={{fontSize: '1rem', borderTop: '2px solid #F4F1F4'}}>
                     <div className="row sub-header">
                         <div className={`sub-header-tab${currentTab === 0 ? '-active' : ''}`}
