@@ -415,7 +415,7 @@ class ReportsPage extends React.Component {
                                         </div>
 
                                         <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10}}>
-                                            CUST PO NO.
+                                            CUST PO NO.<br/>
                                             {currentinvoice.poNumber}
                                         </div>
                                     </div>
@@ -777,22 +777,22 @@ class ReportsPage extends React.Component {
                 {
                     catalogs.map(catalog => {
                         return catalog.length === 0 ? <div></div>
-                        : (<div style={{borderRadius: 15, border: '1px solid gray', textAlign: 'center',
+                        : (<div style={{borderRadius: 15, border: '1px solid gray',
                             padding: '15px', width: '70%', marginLeft: '15%', marginBottom: 15}}>
                             <div style={{height: '1em', marginBottom: '1em'}}> {catalog[0].TBLDESC} </div>
-                            <table style={{border: '1px solid black', width: '100%'}}>
+                            <table style={{border: '1px solid black', fontSize: '0.75rem', width: '100%'}}>
                                 <thead style={{backgroundColor: 'black', color: 'white'}}>
-                                    <tr style={{textAlign: 'left'}}>
-                                        <th style={{width: '80%'}}>Description</th>
-                                        <th style={{width: '20%'}}>U/M</th>
+                                    <tr>
+                                        <th style={{width: '90%', textAlign: 'left', paddingLeft: 5}}>Description</th>
+                                        <th style={{width: '10%', textAlign: 'center'}}>U/M</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {
                                         catalog.map(item => {
                                             return (<tr>
-                                                <td style={{height: '1em', border: '1px solid black'}}>{item.DESCRIP}</td>
-                                                <td style={{height: '1em', border: '1px solid black'}}>{item.UNITMS}</td>
+                                                <td style={{height: '1em', border: '1px solid black', textAlign: 'left', paddingLeft: 5}}>{item.DESCRIP}</td>
+                                                <td style={{height: '1em', border: '1px solid black', textAlign: 'center'}}>{item.UNITMS}</td>
                                             </tr>)
                                         })
                                     }

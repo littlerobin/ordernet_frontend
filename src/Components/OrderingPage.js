@@ -187,7 +187,7 @@ class OrderingPage extends React.Component {
         if (curSelectedItem !== null)
             quantum[curSelectedItem.item] = parseFloat(currentQuantum);
 
-        this.setState({curSelectedItem: newSelectedItem, quantum: quantum,
+        this.setState({currentRowItem: newSelectedItem, curSelectedItem: newSelectedItem, quantum: quantum,
             currentQuantum: quantum[newSelectedItem.item] === undefined ? 0 : quantum[newSelectedItem.item]});
     }
 
@@ -358,7 +358,7 @@ class OrderingPage extends React.Component {
                                 }
                             </div>
                             
-                                <table className="order-table" style={{height: 600, display: 'block', emptyCells: 'show'}}>
+                                <table className="order-table" style={{fontSize: '0.75rem', height: 600, display: 'block', emptyCells: 'show'}}>
                                     <thead>
                                         <tr>
                                             <th style={{width: '5%'}}>QTY</th>
@@ -380,11 +380,12 @@ class OrderingPage extends React.Component {
                                                 else if (isReviewMode === true || orderID !== "")
                                                     return (<tr></tr>);
 
-                                                return (<tr className={curSelectedRow === product.item ? 'selected-row'
+                                                return (<tr className={curSelectedRow === product.item || (curSelectedRow === null && currentRowItem !== null && currentRowItem.item === product.item) ? 'selected-row'
                                                 : ((quantum[product.item] !== undefined && quantum[product.item] > 0) ? 'quanted-row' : '')}>
                                                     <td>
                                                         {
-                                                            product.item === curSelectedRow ? <input ref={(input) => {this.quantumRef = input}} type="text" style={{width: '100%'}}
+                                                            product.item === curSelectedRow ? <input ref={(input) => {this.quantumRef = input}}
+                                                                type="text" style={{width: '100%'}}
                                                                 value = {currentQuantum}
                                                                 onKeyUp={e => {if (e.keyCode === 13) { this.onSelectedRowChanged(product) }}}
                                                                 onChange={e => {e.preventDefault();e.stopPropagation(); this.onCurQuanChanged(e)}}/> : 
@@ -411,7 +412,7 @@ class OrderingPage extends React.Component {
                         <div className="col-md-2">
                             {   orderID === "" ? (<div className="row" style={{}}>
                                     <div class="col-md-12" style={{borderRadius: 5, backgroundColor: '#FFA000', border: '0.5px solid gray',
-                                        fontWeight: 700, color: '#FFFFFF', marginBottom: 10}}>
+                                        fontWeight: 700, color: '#FFFFFF', marginBottom: 10, textAlign: 'center'}}>
                                         ORDER TOTAL<br/>${totalPrice.toFixed(2)}
                                     </div>
                                     <div class="col-md-12" style={{textAlign: 'left', padding: 0, display: isReviewMode ? 'none' : 'block'}}>

@@ -87,8 +87,12 @@ table {
     cursor: default;
 }
 
+tr:hover {
+    background-color: #CEDBEF !important;
+}
+
 .selected-row {
-    background-color: #CCCCCC !important;
+    background-color: #A8C6EE !important;
 }
 
 .quanted-row {
@@ -101,6 +105,8 @@ table {
 }
 .order-table tr td {
     border-right: 1.5px solid #CCCCCC;
+    line-height: 2em;
+    padding-left: 5px;
 }
 
 .order-table tr td:last-of-type {
@@ -108,17 +114,18 @@ table {
 }
 
 .order-table th {
+    padding-left: 3px;
     border-right: 1.5px solid #C2808C;
     border-bottom: 1.5px solid #C2808C;
     background: -webkit-linear-gradient(-90deg,  rgba(255,205,100,1) 0%,rgba(252,182,83,1) 50%, rgba(249,159,67,1) 100%);
 }
 
 .order-table tr:nth-child(odd) {
-    background: #F6F2F6;
+    background: #FFFFFF;
 }
 
 .order-table tr:nth-child(even) {
-    background: #FFFFFF;
+    background: #F6F2F6;
 }
 
 .order-table th:last-of-type {
@@ -194,7 +201,7 @@ table {
 /*--------------------------- Order Page ----------------------------*/
 
 .sub-header {
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     font-weight: 700;
     background-color: #E4E1E4;
     margin: -20px;
