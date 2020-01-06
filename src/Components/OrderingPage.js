@@ -15,6 +15,7 @@ import cookie from 'js-cookie';
 class OrderingPage extends React.Component {
     deliveryDateRef = null;
     quantumRef = null;
+    tableRef = null;
 
     constructor(props) {
         super(props);
@@ -170,9 +171,59 @@ class OrderingPage extends React.Component {
         });
     }
 
+    onMoveSelectedRow = (key, products) => {
+        let { curSelectedItem, currentRowItem } = this.state;
+        if (key === 0x26) {
+            // up
+            if (curSelectedItem !== null) {
+                products.map((product, index) => {
+                    if (product.item === curSelectedItem.item) {
+                        if (index === 0)
+                            return;
+                        this.onSelectedRowChanged(products[index - 1]);
+                        return;
+                    }
+                });
+            }
+            else if (currentRowItem !== null) {
+                products.map((product, index) => {
+                    if (product.item === currentRowItem.item) {
+                        if (index === 0)
+                            return;
+                        this.onCurRowChanged(products[index - 1]);
+                        return;
+                    }
+                });
+            }
+        }
+        else if (key === 0x28) {
+            //down
+            if (curSelectedItem !== null) {
+                products.map((product, index) => {
+                    if (product.item === curSelectedItem.item) {
+                        if (index === products.length - 1)
+                            return;
+                        this.onSelectedRowChanged(products[index + 1]);
+                        return;
+                    }
+                });
+            }
+            else if (currentRowItem !== null) {
+                products.map((product, index) => {
+                    if (product.item === currentRowItem.item) {
+                        if (index === products.length + 1)
+                            return;
+                        this.onCurRowChanged(products[index + 1]);
+                        return;
+                    }
+                });
+            }
+        }
+    }
+
     onCurRowChanged = (newSelectedItem) => {
         let { quantum, curSelectedItem, currentQuantum } = this.state;
-        
+
         if (curSelectedItem !== null) {
             quantum[curSelectedItem.item] = parseFloat(currentQuantum);
             this.setState({quantum: quantum, currentQuantum: 0, curSelectedItem: null});
@@ -184,6 +235,8 @@ class OrderingPage extends React.Component {
 
     onSelectedRowChanged = (newSelectedItem) => {
         let { quantum, curSelectedItem, currentQuantum } = this.state;
+
+        this.tableRef.focus();
 
         if (curSelectedItem !== null && curSelectedItem.item === newSelectedItem.item) {
             quantum[curSelectedItem.item] = parseFloat(currentQuantum);
@@ -372,7 +425,9 @@ class OrderingPage extends React.Component {
                                 }
                             </div>
                             
-                                <table className="order-table" style={{fontSize: '0.75rem', height: 600, display: 'block', emptyCells: 'show'}}>
+                                <table tabindex="0" ref={(input) => {this.tableRef = input}}
+                                    onKeyUp={e => {if (e.keyCode === 0x26 || e.keyCode === 0x28) this.onMoveSelectedRow(e.keyCode, products);}}
+                                    className="order-table" style={{fontSize: '0.75rem', height: 600, display: 'block', emptyCells: 'show'}}>
                                     <thead>
                                         <tr>
                                             <th style={{width: '5%'}}>QTY</th>
@@ -388,7 +443,7 @@ class OrderingPage extends React.Component {
                                     </thead>
                                     <tbody>
                                         {
-                                            products.map(product => {
+                                            products.map((product, index) => {
                                                 if (quantum[product.item] !== undefined && quantum[product.item] > 0)
                                                     totalPrice += quantum[product.item] * product.Price1;
                                                 else if (isReviewMode === true || orderID !== "")
@@ -401,7 +456,7 @@ class OrderingPage extends React.Component {
                                                             product.item === curSelectedRow ? <input ref={(input) => {this.quantumRef = input}}
                                                                 type="text" style={{width: '100%'}}
                                                                 value = {currentQuantum}
-                                                                onKeyUp={e => {if (e.keyCode === 13) { this.onSelectedRowChanged(product) }}}
+                                                                onKeyUp={e => {if (e.keyCode === 13) { this.onMoveSelectedRow(0x28, products) }}}
                                                                 onChange={e => {e.preventDefault();e.stopPropagation(); this.onCurQuanChanged(e)}}/> : 
                                                                 <div onClick={() => {this.onSelectedRowChanged(product)}}>
                                                                     {(quantum[product.item] !== undefined && quantum[product.item] > 0) ? quantum[product.item] : 0}
