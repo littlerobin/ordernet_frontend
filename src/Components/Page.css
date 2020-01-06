@@ -22,6 +22,10 @@
     color: blue;
 }
 
+input {
+    font-size: 0.75rem !important;
+}
+
 input[type=button] {
     background-image: linear-gradient(to bottom, white, lightgray) !important;
     border: 0.5px solid #111111;
@@ -135,10 +139,12 @@ tr:hover {
 
 /* customized dropdown */
 
+.Dropdown-root {
+    font-size: 0.75rem;
+}
 
 .Dropdown-control {
     line-height: 1em;
-    height: 2em;
 }
 
 .calendar-width-fix {

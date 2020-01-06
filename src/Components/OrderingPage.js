@@ -171,6 +171,13 @@ class OrderingPage extends React.Component {
     }
 
     onCurRowChanged = (newSelectedItem) => {
+        let { quantum, curSelectedItem, currentQuantum } = this.state;
+        
+        if (curSelectedItem !== null) {
+            quantum[curSelectedItem.item] = parseFloat(currentQuantum);
+            this.setState({quantum: quantum, currentQuantum: 0, curSelectedItem: null});
+        }
+
         this.setState({currentRowItem: newSelectedItem});
         this.setState({curSelectedItem: null, currentQuantum: 0})
     }
@@ -193,7 +200,14 @@ class OrderingPage extends React.Component {
 
     onCurQuanChanged = e => {
         let currentQuantum = e.target.value;
-        this.setState({currentQuantum: currentQuantum});
+        let curState = this.state.currentQuantum;
+
+        if (currentQuantum === "" || /^[0-9]+((\.){1,1}[0-9]*){0,1}$/.test(currentQuantum) === true) {
+            this.setState({currentQuantum: currentQuantum});
+        }
+        else {
+            this.setState({currentQuantum: curState});
+        }
     }
 
     onPONumChanged = e => {
@@ -411,14 +425,14 @@ class OrderingPage extends React.Component {
                         </div>
                         <div className="col-md-2">
                             {   orderID === "" ? (<div className="row" style={{}}>
-                                    <div class="col-md-12" style={{borderRadius: 5, backgroundColor: '#FFA000', border: '0.5px solid gray',
+                                    <div className="col-md-12" style={{borderRadius: 5, backgroundColor: '#FFA000', border: '0.5px solid gray',
                                         fontWeight: 700, color: '#FFFFFF', marginBottom: 10, textAlign: 'center'}}>
                                         ORDER TOTAL<br/>${totalPrice.toFixed(2)}
                                     </div>
-                                    <div class="col-md-12" style={{textAlign: 'left', padding: 0, display: isReviewMode ? 'none' : 'block'}}>
+                                    <div className="col-md-12" style={{textAlign: 'left', padding: 0, display: isReviewMode ? 'none' : 'block'}}>
                                         <label onClick={() => {this.onChangeIsProfile();}}>
                                             {
-                                                isProfileItems === false ? <input type="checkbox" /> : <input type="checkbox" checked/>
+                                                isProfileItems === false ? <input type="checkbox" /> : <input type="checkbox" checked readOnly/>
                                             }
                                             PROFILE ITEMS
                                         </label>
@@ -428,7 +442,7 @@ class OrderingPage extends React.Component {
                                         value={ isReviewMode === false ? 'Review Order' : 'Continue Ordering'}/>
                                     <input type="button" style={{color: 'red', width: "100%", marginBottom: 5}} 
                                         onClick={() => {this.completeOrder()}} value="Complete Order"/>
-                                    <div class="col-md-12" style={{padding: 0}}>
+                                    <div className="col-md-12" style={{padding: 0}}>
                                         <div style={{fontSize: "0.8rem", textAlign: 'left'}}>Enter comments here:</div>
                                         <textarea style={{height: '10em', resize: 'none',
                                             backgroundColor: '#F4F1F4', borderRadius: 5}}
