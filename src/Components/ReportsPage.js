@@ -11,6 +11,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import 'react-dropdown/style.css';
 
 import cookie from 'js-cookie';
+import { ColorContext } from './ColorProvider';
 
 class ReportsPage extends React.Component {
     fromDateRef = null;
@@ -308,500 +309,555 @@ class ReportsPage extends React.Component {
                 });
             })
 
-            return (<div>
-                <div className="" style={{width: "100%", marginLeft: 0, marginBottom: 15, display: "inline-flex", alignItems: "center"}}>
-                    <div style={{width: "35%"}}>
-                        <Dropdown options={invoicelist} value={currentinvno} placeholder='Select Invoice'
-                            onChange={newInv => {wholePage.onCurrentInvoiceChange(newInv.value);}}/>
-                    </div>
-                    <span style={{width: '5%', textAlign: 'center', marginLeft: 5, marginRight: 5}}>OR</span>
-                    <input type="text" placeholder="Enter Invoice Number"
-                        ref={inputItem => {wholePage.currentInvInputRef = inputItem}} style={{width:'35%', marginRight: 10}}/>
-                    <input type="button" value="GO" onClick={() => {wholePage.onFindCurrentInvoice()}}/>
+            return (
+                <ColorContext.Consumer>
                     {
-                        currentinvoice !== null && <input type="button" style={{marginLeft: 25}} value="PRINT INVOICE" onClick={() => {printCurrentInvoice()}}/>
+                        context => {
+                            let { colors } = context.state;
+                            return (
+                                <div>
+                                    <div className="" style={{width: "100%", marginLeft: 0, marginBottom: 15, display: "inline-flex", alignItems: "center"}}>
+                                        <div style={{width: "35%"}}>
+                                            <Dropdown options={invoicelist} value={currentinvno} placeholder='Select Invoice'
+                                                onChange={newInv => {wholePage.onCurrentInvoiceChange(newInv.value);}}/>
+                                        </div>
+                                        <span style={{width: '5%', textAlign: 'center', marginLeft: 5, marginRight: 5}}>OR</span>
+                                        <input type="text" placeholder="Enter Invoice Number"
+                                            ref={inputItem => {wholePage.currentInvInputRef = inputItem}} style={{width:'35%', marginRight: 10}}/>
+                                        <input type="button" value="GO" onClick={() => {wholePage.onFindCurrentInvoice()}}/>
+                                        {
+                                            currentinvoice !== null && <input type="button" style={{marginLeft: 25}} value="PRINT INVOICE" onClick={() => {printCurrentInvoice()}}/>
+                                        }
+                                    </div>
+                                    {
+                                        currentinvoice === null ? (<div></div>) : (
+                                            <div>
+                                                <div className="row" style={{marginBottom:10, alignItems: 'normal'}}>
+                                                    <div className="col-md-5" style={{}}>
+                                                        <div className="ship-to">
+                                                            <div className="text-default"><b>SHIP TO</b></div>
+                                                            <div className="text-default">{currentinvoice.shippingCompany}</div>
+                                                            <div className="text-default">{currentinvoice.shippingAddress1}</div>
+                                                            <div className="text-default">{currentinvoice.shippingAddress2}</div>
+                                                            <div className="text-default">{`${currentinvoice.shippingCity} ${currentinvoice.shippingState} ${currentinvoice.shippingZip}`}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-md-5" style={{}}>
+                                                        <div className="ship-to">
+                                                            <div className="text-default"><b>BILL TO</b></div>
+                                                            <div className="text-default">{currentinvoice.billingCompany}</div>
+                                                            <div className="text-default">{currentinvoice.billingAddress1}</div>
+                                                            <div className="text-default">{currentinvoice.billingAddress2}</div>
+                                                            <div className="text-default">{`${currentinvoice.billingCity} ${currentinvoice.billingState} ${currentinvoice.billingZip}`}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-md-2" style={{marginTop: 5, fontSize: '0.75rem', textAlign: 'center'}}>
+                                                        <div style={{backgroundColor: 'rgba(249,159,67,1)', border: '1px solid black', borderRadius: '10px', padding: 15, marginBottom: 10}}>
+                                                            <div>INVOICE NO.</div>
+                                                            <div>{currentinvoice.invoiceNumber}</div>
+                                                        </div>
+                                                        <div style={{backgroundColor: '#F4F1F4', border: '1px solid black', borderRadius: '10px', padding: 15, marginBottom: 10}}>
+                                                            <div>INVOICE DATE</div>
+                                                            <div>
+                                                                {((new Date(currentinvoice.invoiceDate).getMonth() + 1) < 10 ? '0' : '') + (new Date(currentinvoice.invoiceDate).getMonth() + 1)}/
+                                                                {((new Date(currentinvoice.invoiceDate).getDate() < 10) ? '0' : '') + new Date(currentinvoice.invoiceDate).getDate()}/
+                                                                {new Date(currentinvoice.invoiceDate).getFullYear()}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-md-10">
+                                                        <table className="order-table" style={{height: 600, display: 'block', emptyCells: 'show'}}>
+                                                            <thead>
+                                                                <tr>
+                                                                    <th style={{width: '10%'}}>Quantity</th>
+                                                                    <th style={{width: '30%'}}>Item</th>
+                                                                    <th style={{width: '30%'}}>Description</th>
+                                                                    <th style={{width: '10%'}}>U/M</th>
+                                                                    <th style={{width: '20%'}}>Price</th>
+                                                                    <th style={{width: '20%'}}>Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {
+                                                                    currentinvoice.products.map(product => {
+                                                                        return (<tr>
+                                                                            <td>{product.quantity}</td>
+                                                                            <td>{product.item}</td>
+                                                                            <td>{product.description}</td>
+                                                                            <td></td>
+                                                                            <td>{product.price1}</td>
+                                                                            <td>{product.quantity * product.price1}</td>
+                                                                        </tr>);
+                                                                    })
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <div className="col-md-2" style={{color: 'black', textAlign: 'center'}}>
+                                                        <div className="" style={{marginTop: 5}}>
+                                                            <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10, marginBottom: 5}}>
+                                                                CUSTOMER NO.<br/>
+                                                                {currentinvoice.customerNumber}
+                                                            </div>
+
+                                                            <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10, marginBottom: 5}}>
+                                                                FOB<br/>
+                                                                {currentinvoice.fob}
+                                                            </div>
+
+                                                            <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10}}>
+                                                                SHIP VIA TRUCK<br/>
+                                                                {currentinvoice.shipVia}
+                                                            </div>
+                                                        </div>
+                                                        <div className="" style={{marginTop: 5}}>
+                                                            <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10, marginBottom: 5}}>
+                                                                SLSM<br/>
+                                                                {currentinvoice.slsm}
+                                                            </div>
+
+                                                            <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10, marginBottom: 5}}>
+                                                                TERMS<br/>
+                                                                {currentinvoice.terms}
+                                                            </div>
+
+                                                            <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10}}>
+                                                                CUST PO NO.<br/>
+                                                                {currentinvoice.poNumber}
+                                                            </div>
+                                                        </div>
+                                                        <div className="" style={{marginTop: 5, color: 'white'}}>
+                                                            <div style={{width: '100%', backgroundColor: 'rgba(181, 138, 0, 1)', fontSize: "0.75rem",
+                                                                padding: 10, border: '1px solid gray', borderRadius: 10}}>
+                                                                ORDER TOTALS<br/>
+                                                                Non-Taxable Subtotal<br/>
+                                                                ${ currentinvoice.subtotal === null ? 0 : currentinvoice.subtotal }<br/>
+                                                                Taxable Subtotal<br/>
+                                                                ${ currentinvoice.taxableSubtotal === null ? 0 : currentinvoice.taxableSubtotal }<br/>
+                                                                Tax<br/>
+                                                                %{ currentinvoice.taxRate === null ? 0 : currentinvoice.taxRate }<br/>
+                                                                Total Order<br/>
+                                                                ${ currentinvoice.total === null ? 0 : currentinvoice.total }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div> 
+                                            </div>
+                                        )
+                                    }
+                                </div>
+                            )
+                        }
                     }
-                </div>
-                {
-                    currentinvoice === null ? (<div></div>) : (
-                        <div>
-                            <div className="row" style={{marginBottom:10, alignItems: 'normal'}}>
-                                <div className="col-md-5" style={{}}>
-                                    <div className="ship-to">
-                                        <div className="text-default"><b>SHIP TO</b></div>
-                                        <div className="text-default">{currentinvoice.shippingCompany}</div>
-                                        <div className="text-default">{currentinvoice.shippingAddress1}</div>
-                                        <div className="text-default">{currentinvoice.shippingAddress2}</div>
-                                        <div className="text-default">{`${currentinvoice.shippingCity} ${currentinvoice.shippingState} ${currentinvoice.shippingZip}`}</div>
-                                    </div>
-                                </div>
-                                <div className="col-md-5" style={{}}>
-                                    <div className="ship-to">
-                                        <div className="text-default"><b>BILL TO</b></div>
-                                        <div className="text-default">{currentinvoice.billingCompany}</div>
-                                        <div className="text-default">{currentinvoice.billingAddress1}</div>
-                                        <div className="text-default">{currentinvoice.billingAddress2}</div>
-                                        <div className="text-default">{`${currentinvoice.billingCity} ${currentinvoice.billingState} ${currentinvoice.billingZip}`}</div>
-                                    </div>
-                                </div>
-                                <div className="col-md-2" style={{marginTop: 5, fontSize: '0.75rem', textAlign: 'center'}}>
-                                    <div style={{backgroundColor: 'rgba(249,159,67,1)', border: '1px solid black', borderRadius: '10px', padding: 15, marginBottom: 10}}>
-                                        <div>INVOICE NO.</div>
-                                        <div>{currentinvoice.invoiceNumber}</div>
-                                    </div>
-                                    <div style={{backgroundColor: '#F4F1F4', border: '1px solid black', borderRadius: '10px', padding: 15, marginBottom: 10}}>
-                                        <div>INVOICE DATE</div>
-                                        <div>
-                                            {((new Date(currentinvoice.invoiceDate).getMonth() + 1) < 10 ? '0' : '') + (new Date(currentinvoice.invoiceDate).getMonth() + 1)}/
-                                            {((new Date(currentinvoice.invoiceDate).getDate() < 10) ? '0' : '') + new Date(currentinvoice.invoiceDate).getDate()}/
-                                            {new Date(currentinvoice.invoiceDate).getFullYear()}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-10">
-                                    <table className="order-table" style={{height: 600, display: 'block', emptyCells: 'show'}}>
-                                        <thead>
-                                            <tr>
-                                                <th style={{width: '10%'}}>Quantity</th>
-                                                <th style={{width: '30%'}}>Item</th>
-                                                <th style={{width: '30%'}}>Description</th>
-                                                <th style={{width: '10%'}}>U/M</th>
-                                                <th style={{width: '20%'}}>Price</th>
-                                                <th style={{width: '20%'}}>Amount</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {
-                                                currentinvoice.products.map(product => {
-                                                    return (<tr>
-                                                        <td>{product.quantity}</td>
-                                                        <td>{product.item}</td>
-                                                        <td>{product.description}</td>
-                                                        <td></td>
-                                                        <td>{product.price1}</td>
-                                                        <td>{product.quantity * product.price1}</td>
-                                                    </tr>);
-                                                })
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div className="col-md-2" style={{color: 'black', textAlign: 'center'}}>
-                                    <div className="" style={{marginTop: 5}}>
-                                        <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10, marginBottom: 5}}>
-                                            CUSTOMER NO.<br/>
-                                            {currentinvoice.customerNumber}
-                                        </div>
-
-                                        <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10, marginBottom: 5}}>
-                                            FOB<br/>
-                                            {currentinvoice.fob}
-                                        </div>
-
-                                        <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10}}>
-                                            SHIP VIA TRUCK<br/>
-                                            {currentinvoice.shipVia}
-                                        </div>
-                                    </div>
-                                    <div className="" style={{marginTop: 5}}>
-                                        <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10, marginBottom: 5}}>
-                                            SLSM<br/>
-                                            {currentinvoice.slsm}
-                                        </div>
-
-                                        <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10, marginBottom: 5}}>
-                                            TERMS<br/>
-                                            {currentinvoice.terms}
-                                        </div>
-
-                                        <div style={{height: '3em', border: '1px solid gray', backgroundColor: '#f4f1f4', borderRadius: 10}}>
-                                            CUST PO NO.<br/>
-                                            {currentinvoice.poNumber}
-                                        </div>
-                                    </div>
-                                    <div className="" style={{marginTop: 5, color: 'white'}}>
-                                        <div style={{width: '100%', backgroundColor: 'rgba(181, 138, 0, 1)', fontSize: "0.75rem",
-                                            padding: 10, border: '1px solid gray', borderRadius: 10}}>
-                                            ORDER TOTALS<br/>
-                                            Non-Taxable Subtotal<br/>
-                                            ${ currentinvoice.subtotal === null ? 0 : currentinvoice.subtotal }<br/>
-                                            Taxable Subtotal<br/>
-                                            ${ currentinvoice.taxableSubtotal === null ? 0 : currentinvoice.taxableSubtotal }<br/>
-                                            Tax<br/>
-                                            %{ currentinvoice.taxRate === null ? 0 : currentinvoice.taxRate }<br/>
-                                            Total Order<br/>
-                                            ${ currentinvoice.total === null ? 0 : currentinvoice.total }
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> 
-                        </div>
-                    )
-                }
-            </div>);
+                </ColorContext.Consumer>
+            );
         }
 
         function SummaryInvoice() {
             let { fromSummary, toSummary, curSummaryInvioceNumber } = wholePage.state;
 
-            return (<div>
-                <div className="row">
-                    <div style={{marginRight: '5px'}}>
-                        From&nbsp;
-                        <DatePicker
-                            ref = {component => {wholePage.fromSummaryRef = component;}}
-                            //open={this.state.pickerOpen}
-                            selected = {fromSummary}
-                            onChange = {wholePage.handleFromSummaryChanged}
-                            className = "date-picker"
-                        />
-                        <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.fromDateRef.setOpen(true);}}/>
-                    </div>
-                    <div style={{marginRight: '5px'}}>
-                        To&nbsp;
-                        <DatePicker
-                            ref = {component => {wholePage.toSummaryRef = component;}}
-                            //open={this.state.pickerOpen}
-                            selected = {toSummary}
-                            onChange = {wholePage.handleToSummaryChanged}
-                            className = "date-picker"
-                        />
-                        <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.toDateRef.setOpen(true);}}/>
-                    </div>
-                    <input type="button" value="SHOW INVOICE SUMMARY" onClick={() => {wholePage.getInvoiceSummary()}}/>
+            return (
+                <ColorContext.Consumer>
                     {
-                        summary !== null && summary.invoices.length > 0 && <input type="button" style={{marginLeft: 10}} 
-                            value="PRINT SUMMARY" onClick={() => {printInvoiceSummary()}}/>
+                        context => {
+                            let { colors } = context.state;
+                            return (
+                                <div>
+                                    <div className="row">
+                                        <div style={{marginRight: '5px'}}>
+                                            From&nbsp;
+                                            <DatePicker
+                                                ref = {component => {wholePage.fromSummaryRef = component;}}
+                                                //open={this.state.pickerOpen}
+                                                selected = {fromSummary}
+                                                onChange = {wholePage.handleFromSummaryChanged}
+                                                className = "date-picker"
+                                            />
+                                            <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.fromDateRef.setOpen(true);}}/>
+                                        </div>
+                                        <div style={{marginRight: '5px'}}>
+                                            To&nbsp;
+                                            <DatePicker
+                                                ref = {component => {wholePage.toSummaryRef = component;}}
+                                                //open={this.state.pickerOpen}
+                                                selected = {toSummary}
+                                                onChange = {wholePage.handleToSummaryChanged}
+                                                className = "date-picker"
+                                            />
+                                            <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.toDateRef.setOpen(true);}}/>
+                                        </div>
+                                        <input type="button" value="SHOW INVOICE SUMMARY" onClick={() => {wholePage.getInvoiceSummary()}}/>
+                                        {
+                                            summary !== null && summary.invoices.length > 0 && <input type="button" style={{marginLeft: 10}} 
+                                                value="PRINT SUMMARY" onClick={() => {printInvoiceSummary()}}/>
+                                        }
+                                        {/*<div className="show-statement" style={{textAlign: 'center', marginTop: 20, marginBottom: 20,
+                                            padding: 15, width: 'fit-content', alignItems: 'center'}}
+                                            onClick={() => {wholePage.getInvoiceSummary();}}>
+                                            SHOW INVOICE SUMMARY
+                                        </div>*/}
+                                    </div>
+                                    {
+                                        (summary === null || summary.invoices.length === 0) ? (<div></div>) : (<div className="row" style={{alignItems: 'end', marginTop: 15}}>
+                                            <table className="order-table col-md-10" style={{height: 600, display: 'block', emptyCells: 'show'}}>
+                                                <thead>
+                                                    <tr>
+                                                        <th style={{width: '10%'}}>Invoice #</th>
+                                                        <th style={{width: '10%'}}>Order #</th>
+                                                        <th style={{width: '20%'}}>Invoice Date</th>
+                                                        <th style={{width: '10%'}}>Customer #</th>
+                                                        <th style={{width: '5%'}}>Ship To</th>
+                                                        <th style={{width: '30%'}}>Invoice Total</th>
+                                                        <th style={{width: '30%'}}>Sales Tax</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {
+                                                        summary.invoices.map(invoice => {
+                                                            let invdte = new Date(invoice.invoiceDate);
+                                                            return (<tr onClick={() => {wholePage.setState({curSummaryInvioceNumber: invoice.invoiceNumber})}}
+                                                            className={curSummaryInvioceNumber === invoice.invoiceNumber ? 'selected-row' : ''}>
+                                                                <td>{invoice.invoiceNumber}</td>
+                                                                <td>{invoice.orderNumber}</td>
+                                                                <td>{`${invdte.getMonth() + 1}/${invdte.getDate()}/${invdte.getFullYear()}`}</td>
+                                                                <td>{invoice.customerNumber}</td>
+                                                                <td>{invoice.shippingCompany}</td>
+                                                                <td>{invoice.invoiceAmount}</td>
+                                                                <td>{invoice.tax}</td>
+                                                            </tr>);
+                                                        })
+                                                    }
+                                                </tbody>
+                                            </table>
+                                            <div className="col-md-2">
+                                                <div style={{width: '100%', marginBottom: 5}}>
+                                                    <div style={{fontSize: '0.875rem', border: '1px solid gray', borderRadius: 10, color: 'white',
+                                                        backgroundColor: 'rgba(249,159,67,1)', padding: 5, textAlign: 'center'}}>
+                                                        INVOICES TOTAL<br/>
+                                                        ${summary.allInvoicesTotal.toFixed(2)}
+                                                    </div>
+                                                </div>
+                                                <div style={{width: '100%', marginBottom: 5}}>
+                                                    <div style={{fontSize: '0.875rem', border: '1px solid gray', borderRadius: 10,
+                                                        backgroundColor: '#F4F1F4', padding: 5, textAlign: 'center'}}>
+                                                        SALES TAX TOTAL<br/>
+                                                        ${summary.allTaxTotal.toFixed(2)}
+                                                    </div>
+                                                </div>
+                                                <input type="button" style={{width: '100%', color: 'blue'}} value="VIEW INVOICE"
+                                                    onClick={() => {wholePage.onCurrentInvoiceChange(wholePage.state.curSummaryInvioceNumber)}}/>
+                                                {/*<div className="show-statement" style={{width: '100%', height: '4em',
+                                                    lineHeight: '4em', verticalAlign: 'middle', textAlign: 'center',
+                                                    color: 'blue', backgroundColor: '#F4F1F4', fontSize: '0.875rem'}}
+                                                    onClick={() => {wholePage.onCurrentInvoiceChange(wholePage.state.curSummaryInvioceNumber);}}>
+                                                    VIEW INVOICE
+                                                </div>*/}
+                                            </div>
+                                        </div>)
+                                    }
+                                </div>
+                            )
+                        }
                     }
-                    {/*<div className="show-statement" style={{textAlign: 'center', marginTop: 20, marginBottom: 20,
-                        padding: 15, width: 'fit-content', alignItems: 'center'}}
-                        onClick={() => {wholePage.getInvoiceSummary();}}>
-                        SHOW INVOICE SUMMARY
-                    </div>*/}
-                </div>
-                {
-                    (summary === null || summary.invoices.length === 0) ? (<div></div>) : (<div className="row" style={{alignItems: 'end', marginTop: 15}}>
-                        <table className="order-table col-md-10" style={{height: 600, display: 'block', emptyCells: 'show'}}>
-                            <thead>
-                                <tr>
-                                    <th style={{width: '10%'}}>Invoice #</th>
-                                    <th style={{width: '10%'}}>Order #</th>
-                                    <th style={{width: '20%'}}>Invoice Date</th>
-                                    <th style={{width: '10%'}}>Customer #</th>
-                                    <th style={{width: '5%'}}>Ship To</th>
-                                    <th style={{width: '30%'}}>Invoice Total</th>
-                                    <th style={{width: '30%'}}>Sales Tax</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    summary.invoices.map(invoice => {
-                                        let invdte = new Date(invoice.invoiceDate);
-                                        return (<tr onClick={() => {wholePage.setState({curSummaryInvioceNumber: invoice.invoiceNumber})}}
-                                        className={curSummaryInvioceNumber === invoice.invoiceNumber ? 'selected-row' : ''}>
-                                            <td>{invoice.invoiceNumber}</td>
-                                            <td>{invoice.orderNumber}</td>
-                                            <td>{`${invdte.getMonth() + 1}/${invdte.getDate()}/${invdte.getFullYear()}`}</td>
-                                            <td>{invoice.customerNumber}</td>
-                                            <td>{invoice.shippingCompany}</td>
-                                            <td>{invoice.invoiceAmount}</td>
-                                            <td>{invoice.tax}</td>
-                                        </tr>);
-                                    })
-                                }
-                            </tbody>
-                        </table>
-                        <div className="col-md-2">
-                            <div style={{width: '100%', marginBottom: 5}}>
-                                <div style={{fontSize: '0.875rem', border: '1px solid gray', borderRadius: 10, color: 'white',
-                                    backgroundColor: 'rgba(249,159,67,1)', padding: 5, textAlign: 'center'}}>
-                                    INVOICES TOTAL<br/>
-                                    ${summary.allInvoicesTotal.toFixed(2)}
-                                </div>
-                            </div>
-                            <div style={{width: '100%', marginBottom: 5}}>
-                                <div style={{fontSize: '0.875rem', border: '1px solid gray', borderRadius: 10,
-                                    backgroundColor: '#F4F1F4', padding: 5, textAlign: 'center'}}>
-                                    SALES TAX TOTAL<br/>
-                                    ${summary.allTaxTotal.toFixed(2)}
-                                </div>
-                            </div>
-                            <input type="button" style={{width: '100%', color: 'blue'}} value="VIEW INVOICE"
-                                onClick={() => {wholePage.onCurrentInvoiceChange(wholePage.state.curSummaryInvioceNumber)}}/>
-                            {/*<div className="show-statement" style={{width: '100%', height: '4em',
-                                lineHeight: '4em', verticalAlign: 'middle', textAlign: 'center',
-                                color: 'blue', backgroundColor: '#F4F1F4', fontSize: '0.875rem'}}
-                                onClick={() => {wholePage.onCurrentInvoiceChange(wholePage.state.curSummaryInvioceNumber);}}>
-                                VIEW INVOICE
-                            </div>*/}
-                        </div>
-                    </div>)
-                }
-            </div>);
+                </ColorContext.Consumer>
+            );
         }
 
         function DetailInvoice() {
             let date = new Date(), { fromDate, toDate } = wholePage.state;
             let year = date.getFullYear(), month = date.getMonth() + 1, day = date.getDate(), hour = date.getHours(), minute = date.getMinutes();
-            return (<div>
-                <div className="row">
-                    <div style={{marginRight: '5px'}}>
-                        From&nbsp;
-                        <DatePicker
-                            ref = {component => {wholePage.fromDateRef = component;}}
-                            //open={this.state.pickerOpen}
-                            selected = {fromDate}
-                            onChange = {wholePage.handleFromDateChanged}
-                            
-                            className = "date-picker"
-                        />
-                        <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.fromDateRef.setOpen(true);}}/>
-                    </div>
-                    <div style={{marginRight: '5px'}}>
-                        To&nbsp;
-                        <DatePicker
-                            ref = {component => {wholePage.toDateRef = component;}}
-                            //open={this.state.pickerOpen}
-                            selected = {toDate}
-                            onChange = {wholePage.handleToDateChanged}
-                            
-                            className = "date-picker"
-                        />
-                        <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.toDateRef.setOpen(true);}}/>
-                    </div>
-                    <input type="button" value="SHOW INVOICES WITH DETAILS" onClick={() => {wholePage.getDetailInvoice()}}/>
-                    {/*<div className="show-statement" style={{textAlign: 'center', marginTop: 20, marginBottom: 20,
-                        padding: 15, width: 'fit-content', alignItems: 'center'}}
-                        onClick={() => {wholePage.getDetailInvoice();}}>
-                        SHOW INVOICES
-                    </div>*/}
+            return (
+                <ColorContext.Consumer>
                     {
-                        (detail === null || detail.invoices.length === 0) ? (<div></div>) : (<div>
-                            <input type="button" value="PRINT" style={{marginLeft: 15}} onClick={() => {printDetailInvoice()}} />
-                            <span style={{border: '1px solid gray', paddingLeft: 30, paddingRight: 30,
-                                marginLeft: 15, borderRadius: 10, backgroundColor: 'rgba(249,159,67,1)'}}>
-                                TOTAL ${detail.allInvoicesTotal.toFixed(2)}
-                            </span>
-                        </div>)
-                    }
-                </div>
-                {
-                    (detail === null || detail.invoices.length === 0) ? (<div>{ detail !== null && <div style={{textAlign: 'center', marginTop: 35}}>No Result</div>}</div>) : (<div>
-                        <div style={{textAlign: 'center', height: 700, overflowY: 'scroll'}}>
-                            {
-                                detail.invoices.map((invoice, index) => {
-                                    let invDate = new Date(invoice.invoiceDate);
-                                    return (<div style={{backgroundColor: index % 2 === 0 ? "#00008B" : "#800080", marginTop: 15, padding: 15, borderRadius: 15}}>
-                                        <div style={{color: 'white', fontWeight: 900}}>
-                                            <span style={{float: 'left'}}>Invoice # {invoice.invoiceNumber}</span>
-                                            <span style={{textAlign: 'center'}}>
-                                                {(invDate.getMonth() + 1) < 10 ? '0' : ''}{invDate.getMonth() + 1}
-                                                /{invDate.getDate() < 10 ? '0' : ''}{invDate.getDate()}
-                                                /{invDate.getFullYear()}
-                                            </span>
-                                            <span>
-                                                <input type="button" value="VIEW INVOICE" style={{float: 'right'}}
-                                                    onClick={() => {wholePage.onCurrentInvoiceChange(invoice.invoiceNumber)}}/>
-                                            </span>
+                        context => {
+                            let { colors } = context.state;
+                            return (
+                                <div>
+                                    <div className="row">
+                                        <div style={{marginRight: '5px'}}>
+                                            From&nbsp;
+                                            <DatePicker
+                                                ref = {component => {wholePage.fromDateRef = component;}}
+                                                //open={this.state.pickerOpen}
+                                                selected = {fromDate}
+                                                onChange = {wholePage.handleFromDateChanged}
+                                                
+                                                className = "date-picker"
+                                            />
+                                            <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.fromDateRef.setOpen(true);}}/>
                                         </div>
-                                        <table className="order-table" style={{width: '100%', textAlign: 'left'}}>
-                                            <thead>
-                                                <tr style={{backgroundColor: 'black'}}>
-                                                    <th style={{width: '25%', border: '1px solid gray'}}>Item</th>
-                                                    <th style={{width: '40%', border: '1px solid gray'}}>Description</th>
-                                                    <th style={{width: '11%', border: '1px solid gray'}}>Price</th>
-                                                    <th style={{width: '11%', border: '1px solid gray'}}>Qty Ship</th>
-                                                    <th style={{width: '13%', border: '1px solid gray'}}>Ext Price</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
+                                        <div style={{marginRight: '5px'}}>
+                                            To&nbsp;
+                                            <DatePicker
+                                                ref = {component => {wholePage.toDateRef = component;}}
+                                                //open={this.state.pickerOpen}
+                                                selected = {toDate}
+                                                onChange = {wholePage.handleToDateChanged}
+                                                
+                                                className = "date-picker"
+                                            />
+                                            <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.toDateRef.setOpen(true);}}/>
+                                        </div>
+                                        <input type="button" value="SHOW INVOICES WITH DETAILS" onClick={() => {wholePage.getDetailInvoice()}}/>
+                                        {/*<div className="show-statement" style={{textAlign: 'center', marginTop: 20, marginBottom: 20,
+                                            padding: 15, width: 'fit-content', alignItems: 'center'}}
+                                            onClick={() => {wholePage.getDetailInvoice();}}>
+                                            SHOW INVOICES
+                                        </div>*/}
+                                        {
+                                            (detail === null || detail.invoices.length === 0) ? (<div></div>) : (<div>
+                                                <input type="button" value="PRINT" style={{marginLeft: 15}} onClick={() => {printDetailInvoice()}} />
+                                                <span style={{border: '1px solid gray', paddingLeft: 30, paddingRight: 30,
+                                                    marginLeft: 15, borderRadius: 10, backgroundColor: 'rgba(249,159,67,1)'}}>
+                                                    TOTAL ${detail.allInvoicesTotal.toFixed(2)}
+                                                </span>
+                                            </div>)
+                                        }
+                                    </div>
+                                    {
+                                        (detail === null || detail.invoices.length === 0) ? (<div>{ detail !== null && <div style={{textAlign: 'center', marginTop: 35}}>No Result</div>}</div>) : (<div>
+                                            <div style={{textAlign: 'center', height: 700, overflowY: 'scroll'}}>
                                                 {
-                                                    invoice.products.map(product => {
-                                                        return (<tr>
-                                                            <td style={{border: '1px solid gray'}}>{product.item}</td>
-                                                            <td style={{border: '1px solid gray'}}>{product.description}</td>
-                                                            <td style={{border: '1px solid gray'}}>{product.price1.toFixed(2)}</td>
-                                                            <td style={{border: '1px solid gray'}}>{product.quantity}</td>
-                                                            <td style={{border: '1px solid gray'}}>{(product.price1 * product.quantity).toFixed(2)}</td>
-                                                        </tr>)
+                                                    detail.invoices.map((invoice, index) => {
+                                                        let invDate = new Date(invoice.invoiceDate);
+                                                        return (<div style={{backgroundColor: index % 2 === 0 ? "#00008B" : "#800080", marginTop: 15, padding: 15, borderRadius: 15}}>
+                                                            <div style={{color: 'white', fontWeight: 900}}>
+                                                                <span style={{float: 'left'}}>Invoice # {invoice.invoiceNumber}</span>
+                                                                <span style={{textAlign: 'center'}}>
+                                                                    {(invDate.getMonth() + 1) < 10 ? '0' : ''}{invDate.getMonth() + 1}
+                                                                    /{invDate.getDate() < 10 ? '0' : ''}{invDate.getDate()}
+                                                                    /{invDate.getFullYear()}
+                                                                </span>
+                                                                <span>
+                                                                    <input type="button" value="VIEW INVOICE" style={{float: 'right'}}
+                                                                        onClick={() => {wholePage.onCurrentInvoiceChange(invoice.invoiceNumber)}}/>
+                                                                </span>
+                                                            </div>
+                                                            <table className="order-table" style={{width: '100%', textAlign: 'left'}}>
+                                                                <thead>
+                                                                    <tr style={{backgroundColor: 'black'}}>
+                                                                        <th style={{width: '25%', border: '1px solid gray'}}>Item</th>
+                                                                        <th style={{width: '40%', border: '1px solid gray'}}>Description</th>
+                                                                        <th style={{width: '11%', border: '1px solid gray'}}>Price</th>
+                                                                        <th style={{width: '11%', border: '1px solid gray'}}>Qty Ship</th>
+                                                                        <th style={{width: '13%', border: '1px solid gray'}}>Ext Price</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {
+                                                                        invoice.products.map(product => {
+                                                                            return (<tr>
+                                                                                <td style={{border: '1px solid gray'}}>{product.item}</td>
+                                                                                <td style={{border: '1px solid gray'}}>{product.description}</td>
+                                                                                <td style={{border: '1px solid gray'}}>{product.price1.toFixed(2)}</td>
+                                                                                <td style={{border: '1px solid gray'}}>{product.quantity}</td>
+                                                                                <td style={{border: '1px solid gray'}}>{(product.price1 * product.quantity).toFixed(2)}</td>
+                                                                            </tr>)
+                                                                        })
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                            <div style={{fontWeight: 700, textAlign: 'right', paddingRight: 40, color: 'white'}}>
+                                                                TOTAL {invoice.invoiceAmount.toFixed(2)}
+                                                            </div>
+                                                        </div>)
                                                     })
                                                 }
-                                            </tbody>
-                                        </table>
-                                        <div style={{fontWeight: 700, textAlign: 'right', paddingRight: 40, color: 'white'}}>
-                                            TOTAL {invoice.invoiceAmount.toFixed(2)}
-                                        </div>
-                                    </div>)
-                                })
-                            }
-                        </div>
-                    </div>)
-                }
-            </div>);
+                                            </div>
+                                        </div>)
+                                    }
+                                </div>
+                            )
+                        }
+                    }
+                </ColorContext.Consumer>
+            );
         }
 
         function Statement() {
             let { curStatementInvoiceNumber } = wholePage.state;
-            return (<div>
-                <div style={{display: 'inline-flex', fontSize: '0.8rem', justifyContent: 'space-evenly', alignItems: 'center'}}>
-                    <div style={{textAlign: "center", border: "1px solid black", borderRadius: 10,
-                    padding: 10}}>
-                        <div style={{fontWeight:700, marginBottom: 5}}>AGE FROM</div>
-                        <label>
-                            <input type="radio" name="ageFrom" checked={wholePage.state.ageFrom === "due"}
-                                onClick={() => {wholePage.setState({ageFrom: "due"})}}/>
-                            Due Date
-                        </label>
-                        <label style={{marginLeft: 10}}>
-                            <input type="radio" name="ageFrom" checked={wholePage.state.ageFrom === "invoice"}
-                                onClick={() => {wholePage.setState({ageFrom: "invoice"})}}/>
-                            Invoice Date
-                        </label>
-                    </div>
-                    <div style={{textAlign: "center", border: "1px solid black", borderRadius: 10,
-                        width: '50%', padding: 10}}>
-                        <div style={{fontWeight:700, marginBottom: 5}}>BREAKDOWN</div>
-                        Period1: <input type="text" style={{width: "10%"}} value={wholePage.state.period1} onChange={e => {wholePage.onPeriodChange(1, e)}}/>
-                        Period2: <input type="text" style={{width: "10%"}} value={wholePage.state.period2} onChange={e => {wholePage.onPeriodChange(2, e)}}/>
-                        Period3: <input type="text" style={{width: "10%"}} value={wholePage.state.period3} onChange={e => {wholePage.onPeriodChange(3, e)}}/>
-                        Period4: <input type="text" style={{width: "10%"}} value={wholePage.state.period4} onChange={e => {wholePage.onPeriodChange(4, e)}}/>
-                    </div>
-                    <div>
-                        <div>
-                            <input type="button" onClick={() => {wholePage.getStatement()}} value="SHOW STATEMENT"/>
-                        </div>
-                        {
-                            statement !== null && <div><br/><input type="button" onClick={() => {printStatement()}} value="PRINT STATEMENT"/></div>
-                        }
-                    </div>
-                </div>
-                {
-                    statement === null ? (<div></div>) : ( <div>
-                        <div className="row" style={{marginTop:10, alignItems: 'normal'}}>
-                            <div className="col-md-10" style={{float: 'left', padding: 5, marginBottom: 10, border: '1px solid black',
-                                borderRadius: 5, backgroundColor: '#F6F2F6', height: 'fit-content'}}>
-                                <div className="text-default"><b>BILL TO</b></div>
-                                <div className="text-default">{statement.billingCompany}</div>
-                                <div className="text-default">{statement.billingAddress1}</div>
-                                <div className="text-default">{statement.billingAddress2}</div>
-                                <div className="text-default">{`${statement.billingCity} ${statement.billingState} ${statement.billingZip}`}</div>
-                            </div>
-                            <div className="col-md-2">
-                                <div style={{textAlign: 'center', fontSize: '0.75rem', fontWeight: 900}}>
-                                    <div style={{backgroundColor: '#F4F1F4', border: '1px solid black', borderRadius: '10px', padding: 5,marginBottom: 10}}>
-                                        <div>STATEMENT DATE</div>
-                                        <div>{statement.statementDate}</div>
+            return (
+                <ColorContext.Consumer>
+                    {
+                        context => {
+                            let { colors } = context.state;
+                            return (
+                                <div>
+                                    <div style={{display: 'inline-flex', fontSize: '0.8rem', justifyContent: 'space-evenly', alignItems: 'center'}}>
+                                        <div style={{textAlign: "center", border: "1px solid black", borderRadius: 10,
+                                        padding: 10}}>
+                                            <div style={{fontWeight:700, marginBottom: 5}}>AGE FROM</div>
+                                            <label>
+                                                <input type="radio" name="ageFrom" checked={wholePage.state.ageFrom === "due"}
+                                                    onClick={() => {wholePage.setState({ageFrom: "due"})}}/>
+                                                Due Date
+                                            </label>
+                                            <label style={{marginLeft: 10}}>
+                                                <input type="radio" name="ageFrom" checked={wholePage.state.ageFrom === "invoice"}
+                                                    onClick={() => {wholePage.setState({ageFrom: "invoice"})}}/>
+                                                Invoice Date
+                                            </label>
+                                        </div>
+                                        <div style={{textAlign: "center", border: "1px solid black", borderRadius: 10,
+                                            width: '50%', padding: 10}}>
+                                            <div style={{fontWeight:700, marginBottom: 5}}>BREAKDOWN</div>
+                                            Period1: <input type="text" style={{width: "10%"}} value={wholePage.state.period1} onChange={e => {wholePage.onPeriodChange(1, e)}}/>
+                                            Period2: <input type="text" style={{width: "10%"}} value={wholePage.state.period2} onChange={e => {wholePage.onPeriodChange(2, e)}}/>
+                                            Period3: <input type="text" style={{width: "10%"}} value={wholePage.state.period3} onChange={e => {wholePage.onPeriodChange(3, e)}}/>
+                                            Period4: <input type="text" style={{width: "10%"}} value={wholePage.state.period4} onChange={e => {wholePage.onPeriodChange(4, e)}}/>
+                                        </div>
+                                        <div>
+                                            <div>
+                                                <input type="button" onClick={() => {wholePage.getStatement()}} value="SHOW STATEMENT"/>
+                                            </div>
+                                            {
+                                                statement !== null && <div><br/><input type="button" onClick={() => {printStatement()}} value="PRINT STATEMENT"/></div>
+                                            }
+                                        </div>
                                     </div>
-                                    <div style={{backgroundColor: '#F4F1F4', border: '1px solid black', borderRadius: '10px', padding: 5, marginBottom: 10}}>
-                                        <div>CUST NO</div>
-                                        <div>{statement.customerNumber}</div>
-                                    </div>
-                                    <div style={{backgroundColor: 'rgba(249,159,67,1)', border: '1px solid black', borderRadius: '10px', padding: 5}}>
-                                        <div>TOTAL</div>
-                                        <div>${(statement.currentDue + statement.period1Due + statement.period2Due +
-                                            statement.period3Due + statement.period4Due).toFixed(2)}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="row" style={{marginTop: 10, alignItems: 'flex-start'}}>
-                            <table className="order-table col-md-10">
-                                <thead>
-                                    <tr>
-                                        <th style={{width: '40%'}}>Transaction Date</th>
-                                        <th style={{width: '40%'}}>Invoice No.</th>
-                                        <th style={{width: '40%'}}>Amount</th>
-                                        <th style={{width: '40%'}}>Balance</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
                                     {
-                                        statement.invoices.map(invoice => {
-                                            let invdte = new Date(invoice.invoiceDate);
-                                            return (<tr onClick={() => {
-                                                    wholePage.setState({curStatementInvoiceNumber: invoice.invoiceNumber})
-                                                }} className={curStatementInvoiceNumber === invoice.invoiceNumber ? 'selected-row' : ''}>
-                                                <td>{`${invdte.getMonth() + 1}/${invdte.getDate()}/${invdte.getFullYear()}`}</td>
-                                                <td>{invoice.invoiceNumber}</td>
-                                                <td>{invoice.invoiceAmount}</td>
-                                                <td>{invoice.invoiceBalance}</td>
-                                            </tr>);
-                                        })
+                                        statement === null ? (<div></div>) : ( <div>
+                                            <div className="row" style={{marginTop:10, alignItems: 'normal'}}>
+                                                <div className="col-md-10" style={{float: 'left', padding: 5, marginBottom: 10, border: '1px solid black',
+                                                    borderRadius: 5, backgroundColor: '#F6F2F6', height: 'fit-content'}}>
+                                                    <div className="text-default"><b>BILL TO</b></div>
+                                                    <div className="text-default">{statement.billingCompany}</div>
+                                                    <div className="text-default">{statement.billingAddress1}</div>
+                                                    <div className="text-default">{statement.billingAddress2}</div>
+                                                    <div className="text-default">{`${statement.billingCity} ${statement.billingState} ${statement.billingZip}`}</div>
+                                                </div>
+                                                <div className="col-md-2">
+                                                    <div style={{textAlign: 'center', fontSize: '0.75rem', fontWeight: 900}}>
+                                                        <div style={{backgroundColor: '#F4F1F4', border: '1px solid black', borderRadius: '10px', padding: 5,marginBottom: 10}}>
+                                                            <div>STATEMENT DATE</div>
+                                                            <div>{statement.statementDate}</div>
+                                                        </div>
+                                                        <div style={{backgroundColor: '#F4F1F4', border: '1px solid black', borderRadius: '10px', padding: 5, marginBottom: 10}}>
+                                                            <div>CUST NO</div>
+                                                            <div>{statement.customerNumber}</div>
+                                                        </div>
+                                                        <div style={{backgroundColor: 'rgba(249,159,67,1)', border: '1px solid black', borderRadius: '10px', padding: 5}}>
+                                                            <div>TOTAL</div>
+                                                            <div>${(statement.currentDue + statement.period1Due + statement.period2Due +
+                                                                statement.period3Due + statement.period4Due).toFixed(2)}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="row" style={{marginTop: 10, alignItems: 'flex-start'}}>
+                                                <table className="order-table col-md-10">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style={{width: '40%'}}>Transaction Date</th>
+                                                            <th style={{width: '40%'}}>Invoice No.</th>
+                                                            <th style={{width: '40%'}}>Amount</th>
+                                                            <th style={{width: '40%'}}>Balance</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {
+                                                            statement.invoices.map(invoice => {
+                                                                let invdte = new Date(invoice.invoiceDate);
+                                                                return (<tr onClick={() => {
+                                                                        wholePage.setState({curStatementInvoiceNumber: invoice.invoiceNumber})
+                                                                    }} className={curStatementInvoiceNumber === invoice.invoiceNumber ? 'selected-row' : ''}>
+                                                                    <td>{`${invdte.getMonth() + 1}/${invdte.getDate()}/${invdte.getFullYear()}`}</td>
+                                                                    <td>{invoice.invoiceNumber}</td>
+                                                                    <td>{invoice.invoiceAmount}</td>
+                                                                    <td>{invoice.invoiceBalance}</td>
+                                                                </tr>);
+                                                            })
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                                <div className="col-md-2" style={{color: 'white', textAlign: 'center', fontSize: '0.75rem', fontWeight: 900}}>
+                                                    <div className="">
+                                                        <div style={{backgroundColor: '#90001C', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
+                                                            CURRENT DUE<br/>
+                                                            ${statement.currentDue.toFixed(2)}
+                                                        </div>
+                                                    </div>
+                                                    <div className="">
+                                                        <div style={{backgroundColor: '#0000A5', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
+                                                            OVER {wholePage.state.period1}<br/>
+                                                            ${statement.period1Due.toFixed(2)}
+                                                        </div>
+                                                    </div>
+                                                    <div className="">
+                                                        <div style={{backgroundColor: '#0041C6', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
+                                                            OVER {wholePage.state.period2}<br/>
+                                                            ${statement.period2Due.toFixed(2)}
+                                                        </div>
+                                                    </div>
+                                                    <div className="">
+                                                        <div style={{backgroundColor: '#3680CE', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
+                                                            OVER {wholePage.state.period3}<br/>
+                                                            ${statement.period3Due.toFixed(2)}
+                                                        </div>
+                                                    </div>
+                                                    <div className="">
+                                                        <div style={{backgroundColor: '#669FCE', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
+                                                            OVER {wholePage.state.period4}<br/>
+                                                            ${statement.period4Due.toFixed(2)}
+                                                        </div>
+                                                    </div>
+                                                    <div className="">
+                                                        <input type="button" style={{color: 'blue', width: '100%', paddingTop: 5, paddingBottom: 5}} value="VIEW INVOICE"
+                                                            onClick={() => {wholePage.onCurrentInvoiceChange(wholePage.state.curStatementInvoiceNumber)}}/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>)
                                     }
-                                </tbody>
-                            </table>
-                            <div className="col-md-2" style={{color: 'white', textAlign: 'center', fontSize: '0.75rem', fontWeight: 900}}>
-                                <div className="">
-                                    <div style={{backgroundColor: '#90001C', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
-                                        CURRENT DUE<br/>
-                                        ${statement.currentDue.toFixed(2)}
-                                    </div>
                                 </div>
-                                <div className="">
-                                    <div style={{backgroundColor: '#0000A5', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
-                                        OVER {wholePage.state.period1}<br/>
-                                        ${statement.period1Due.toFixed(2)}
-                                    </div>
-                                </div>
-                                <div className="">
-                                    <div style={{backgroundColor: '#0041C6', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
-                                        OVER {wholePage.state.period2}<br/>
-                                        ${statement.period2Due.toFixed(2)}
-                                    </div>
-                                </div>
-                                <div className="">
-                                    <div style={{backgroundColor: '#3680CE', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
-                                        OVER {wholePage.state.period3}<br/>
-                                        ${statement.period3Due.toFixed(2)}
-                                    </div>
-                                </div>
-                                <div className="">
-                                    <div style={{backgroundColor: '#669FCE', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
-                                        OVER {wholePage.state.period4}<br/>
-                                        ${statement.period4Due.toFixed(2)}
-                                    </div>
-                                </div>
-                                <div className="">
-                                    <input type="button" style={{color: 'blue', width: '100%', paddingTop: 5, paddingBottom: 5}} value="VIEW INVOICE"
-                                        onClick={() => {wholePage.onCurrentInvoiceChange(wholePage.state.curStatementInvoiceNumber)}}/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>)
-                }
-            </div>);
+                            )
+                        }
+                    }
+                </ColorContext.Consumer>
+            );
         }
 
         function Catalog() {
-            return catalogs === null ? (<div></div>) : (<div>
-                {
-                    catalogs.map(catalog => {
-                        return catalog.length === 0 ? <div></div>
-                        : (<div style={{borderRadius: 15, border: '1px solid gray',
-                            padding: '15px', width: '70%', marginLeft: '15%', marginBottom: 15}}>
-                            <div style={{height: '1em', marginBottom: '1em'}}> {catalog[0].TBLDESC} </div>
-                            <table style={{border: '1px solid black', fontSize: '0.75rem', width: '100%'}}>
-                                <thead style={{backgroundColor: 'black', color: 'white'}}>
-                                    <tr>
-                                        <th style={{width: '90%', textAlign: 'left', paddingLeft: 5}}>Description</th>
-                                        <th style={{width: '10%', textAlign: 'center'}}>U/M</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+            return catalogs === null ? (<div></div>) : (
+                <ColorContext.Consumer>
+                    {
+                        context => {
+                            let { colors } = context.state;
+                            return (
+                                <div>
                                     {
-                                        catalog.map(item => {
-                                            return (<tr>
-                                                <td style={{height: '1em', border: '1px solid black', textAlign: 'left', paddingLeft: 5}}>{item.DESCRIP}</td>
-                                                <td style={{height: '1em', border: '1px solid black', textAlign: 'center'}}>{item.UNITMS}</td>
-                                            </tr>)
+                                        catalogs.map(catalog => {
+                                            return catalog.length === 0 ? <div></div>
+                                            : (<div style={{borderRadius: 15, border: '1px solid gray',
+                                                padding: '15px', width: '70%', marginLeft: '15%', marginBottom: 15}}>
+                                                <div style={{height: '1em', marginBottom: '1em'}}> {catalog[0].TBLDESC} </div>
+                                                <table style={{border: '1px solid black', fontSize: '0.75rem', width: '100%'}}>
+                                                    <thead style={{backgroundColor: 'black', color: 'white'}}>
+                                                        <tr>
+                                                            <th style={{width: '90%', textAlign: 'left', paddingLeft: 5}}>Description</th>
+                                                            <th style={{width: '10%', textAlign: 'center'}}>U/M</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {
+                                                            catalog.map(item => {
+                                                                return (<tr>
+                                                                    <td style={{height: '1em', border: '1px solid black', textAlign: 'left', paddingLeft: 5}}>{item.DESCRIP}</td>
+                                                                    <td style={{height: '1em', border: '1px solid black', textAlign: 'center'}}>{item.UNITMS}</td>
+                                                                </tr>)
+                                                            })
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>)
                                         })
                                     }
-                                </tbody>
-                            </table>
-                        </div>)
-                    })
-                }
-            </div>);
+                                </div>
+                            )
+                        }
+                    }
+                </ColorContext.Consumer>
+            );
         }
 
         function printCatalog() {
