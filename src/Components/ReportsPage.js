@@ -314,6 +314,12 @@ class ReportsPage extends React.Component {
                     {
                         context => {
                             let { colors } = context.state;
+                            let back = colors.GridHeaderBack;
+
+                            let red = parseInt(back.substr(1, 2), 16);
+                            let green = parseInt(back.substr(3, 2), 16);
+                            let blue = parseInt(back.substr(5, 2), 16);
+
                             return (
                                 <div>
                                     <div className="" style={{width: "100%", marginLeft: 0, marginBottom: 15, display: "inline-flex", alignItems: "center"}}>
@@ -369,12 +375,12 @@ class ReportsPage extends React.Component {
                                                         <table className="order-table" style={{height: 600, display: 'block', emptyCells: 'show'}}>
                                                             <thead>
                                                                 <tr>
-                                                                    <th style={{width: '10%'}}>Quantity</th>
-                                                                    <th style={{width: '30%'}}>Item</th>
-                                                                    <th style={{width: '30%'}}>Description</th>
-                                                                    <th style={{width: '10%'}}>U/M</th>
-                                                                    <th style={{width: '20%'}}>Price</th>
-                                                                    <th style={{width: '20%'}}>Amount</th>
+                                                                    <th style={{width: '10%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Quantity</th>
+                                                                    <th style={{width: '30%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Item</th>
+                                                                    <th style={{width: '30%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Description</th>
+                                                                    <th style={{width: '10%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>U/M</th>
+                                                                    <th style={{width: '20%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Price</th>
+                                                                    <th style={{width: '20%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Amount</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -461,6 +467,11 @@ class ReportsPage extends React.Component {
                     {
                         context => {
                             let { colors } = context.state;
+                            let back = colors.GridHeaderBack;
+
+                            let red = parseInt(back.substr(1, 2), 16);
+                            let green = parseInt(back.substr(3, 2), 16);
+                            let blue = parseInt(back.substr(5, 2), 16);
                             return (
                                 <div>
                                     <div className="row">
@@ -499,16 +510,16 @@ class ReportsPage extends React.Component {
                                     </div>
                                     {
                                         (summary === null || summary.invoices.length === 0) ? (<div></div>) : (<div className="row" style={{alignItems: 'end', marginTop: 15}}>
-                                            <table className="order-table col-md-10" style={{height: 600, display: 'block', emptyCells: 'show'}}>
+                                            <table className="order-table col-md-10" style={{height: 600}}>
                                                 <thead>
                                                     <tr>
-                                                        <th style={{width: '10%'}}>Invoice #</th>
-                                                        <th style={{width: '10%'}}>Order #</th>
-                                                        <th style={{width: '20%'}}>Invoice Date</th>
-                                                        <th style={{width: '15%'}}>Customer #</th>
-                                                        <th style={{width: '15%'}}>Ship To</th>
-                                                        <th style={{width: '30%'}}>Invoice Total</th>
-                                                        <th style={{width: '30%'}}>Sales Tax</th>
+                                                        <th style={{width: '10%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Invoice #</th>
+                                                        <th style={{width: '10%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Order #</th>
+                                                        <th style={{width: '20%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Invoice Date</th>
+                                                        <th style={{width: '15%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Customer #</th>
+                                                        <th style={{width: '15%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Ship To</th>
+                                                        <th style={{width: '30%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Invoice Total</th>
+                                                        <th style={{width: '30%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Sales Tax</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -571,6 +582,11 @@ class ReportsPage extends React.Component {
                     {
                         context => {
                             let { colors } = context.state;
+                            let back = colors.GridHeaderBack;
+
+                        let red = parseInt(back.substr(1, 2), 16);
+                        let green = parseInt(back.substr(3, 2), 16);
+                        let blue = parseInt(back.substr(5, 2), 16);
                             return (
                                 <div>
                                     <div className="row">
@@ -636,11 +652,11 @@ class ReportsPage extends React.Component {
                                                             <table className="order-table" style={{width: '100%', textAlign: 'left'}}>
                                                                 <thead>
                                                                     <tr style={{backgroundColor: 'black'}}>
-                                                                        <th style={{width: '25%', border: '1px solid gray'}}>Item</th>
-                                                                        <th style={{width: '40%', border: '1px solid gray'}}>Description</th>
-                                                                        <th style={{width: '11%', border: '1px solid gray'}}>Price</th>
-                                                                        <th style={{width: '11%', border: '1px solid gray'}}>Qty Ship</th>
-                                                                        <th style={{width: '13%', border: '1px solid gray'}}>Ext Price</th>
+                                                                        <th style={{width: '25%', border: '1px solid gray', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Item</th>
+                                                                        <th style={{width: '40%', border: '1px solid gray', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Description</th>
+                                                                        <th style={{width: '11%', border: '1px solid gray', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Price</th>
+                                                                        <th style={{width: '11%', border: '1px solid gray', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Qty Ship</th>
+                                                                        <th style={{width: '13%', border: '1px solid gray', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Ext Price</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -681,6 +697,11 @@ class ReportsPage extends React.Component {
                     {
                         context => {
                             let { colors } = context.state;
+                            let back = colors.GridHeaderBack;
+
+                            let red = parseInt(back.substr(1, 2), 16);
+                            let green = parseInt(back.substr(3, 2), 16);
+                            let blue = parseInt(back.substr(5, 2), 16);
                             return (
                                 <div>
                                     <div style={{display: 'inline-flex', fontSize: '0.8rem', justifyContent: 'space-evenly', alignItems: 'center'}}>
@@ -748,10 +769,10 @@ class ReportsPage extends React.Component {
                                                 <table className="order-table col-md-10">
                                                     <thead>
                                                         <tr>
-                                                            <th style={{width: '40%'}}>Transaction Date</th>
-                                                            <th style={{width: '40%'}}>Invoice No.</th>
-                                                            <th style={{width: '40%'}}>Amount</th>
-                                                            <th style={{width: '40%'}}>Balance</th>
+                                                            <th style={{width: '40%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Transaction Date</th>
+                                                            <th style={{width: '40%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Invoice No.</th>
+                                                            <th style={{width: '40%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Amount</th>
+                                                            <th style={{width: '40%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Balance</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -823,6 +844,11 @@ class ReportsPage extends React.Component {
                     {
                         context => {
                             let { colors } = context.state;
+                            let back = colors.GridHeaderBack;
+
+                            let red = parseInt(back.substr(1, 2), 16);
+                            let green = parseInt(back.substr(3, 2), 16);
+                            let blue = parseInt(back.substr(5, 2), 16);
                             return (
                                 <div>
                                     {
