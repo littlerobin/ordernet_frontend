@@ -564,6 +564,8 @@ class OrderingPage extends React.Component {
     
                                                 totalItems: 0,
                                                 totalCost: 0,
+
+                                                isReviewMode: false,
                                             })}}
                                             value="MAKE NEW ORDER"/>
                                     </React.Fragment>)

@@ -1277,7 +1277,7 @@ class ReportsPage extends React.Component {
         return (
             <div>
                 <Header currentPage={2}/>
-                <iframe id="printform" style={{display: 'block', width: '100%'}}/>
+                <iframe id="printform" style={{display: 'none', width: '100%'}}/>
                 <div className="page" style={{fontSize: '1rem', borderTop: '2px solid #F4F1F4'}}>
                     <div className="row sub-header">
                         <div className={`sub-header-tab${currentTab === 0 ? '-active' : ''}`}
