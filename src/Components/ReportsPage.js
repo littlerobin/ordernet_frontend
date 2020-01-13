@@ -505,8 +505,8 @@ class ReportsPage extends React.Component {
                                                         <th style={{width: '10%'}}>Invoice #</th>
                                                         <th style={{width: '10%'}}>Order #</th>
                                                         <th style={{width: '20%'}}>Invoice Date</th>
-                                                        <th style={{width: '10%'}}>Customer #</th>
-                                                        <th style={{width: '5%'}}>Ship To</th>
+                                                        <th style={{width: '15%'}}>Customer #</th>
+                                                        <th style={{width: '15%'}}>Ship To</th>
                                                         <th style={{width: '30%'}}>Invoice Total</th>
                                                         <th style={{width: '30%'}}>Sales Tax</th>
                                                     </tr>

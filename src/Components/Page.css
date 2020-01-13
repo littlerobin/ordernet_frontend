@@ -107,9 +107,14 @@ tr:hover {
     overflow-y: scroll;
     border: 2px solid #C2808C;
 }
+
+.order-table tr {
+    height: 1em !important;
+}
+
 .order-table tr td {
     border-right: 1.5px solid #CCCCCC;
-    line-height: 2em;
+    line-height: 1.5em;
     padding-left: 5px;
 }
 
