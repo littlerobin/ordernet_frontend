@@ -444,7 +444,7 @@ class OrderingPage extends React.Component {
                                 <div className="col-md-10">                                   
                                         <table tabindex="0" ref={(input) => {this.tableRef = input}}
                                             onKeyUp={e => {if (e.keyCode === 0x26 || e.keyCode === 0x28) this.onMoveSelectedRow(e.keyCode, products);}}
-                                            className="order-table" style={{fontSize: '0.75rem', height: 600,
+                                            className="order-table" style={{fontSize: '0.85rem', height: 600, display: 'block',
                                                 emptyCells: 'show'}}>
                                             <thead>
                                                 <tr>
