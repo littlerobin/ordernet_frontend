@@ -1159,7 +1159,7 @@ class ReportsPage extends React.Component {
 
             printform.contentWindow.document.write(`<div style="width: 100%;display: flex">`);
 
-            printform.contentWindow.document.write(`<div style="width: 50%;margin-top: 15px;">`);
+            printform.contentWindow.document.write(`<div style="width: 50%;">`);
             printform.contentWindow.document.write(`<div>Invoice No. ${currentinvoice.invoiceNumber}</div>`);
             printform.contentWindow.document.write(`<div>Invoice Date: ${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}/${year}</div>`);
             printform.contentWindow.document.write(`<div>Customer No. ${currentinvoice.customerNumber}</div>`);
@@ -1175,9 +1175,9 @@ class ReportsPage extends React.Component {
 
             printform.contentWindow.document.write(`</div>`);
 
-            printform.contentWindow.document.write(`<div style="width: 100%;display:flex;">`);
+            printform.contentWindow.document.write(`<div style="width: 100%;display:flex;justify-content:space-between;margin-top:15px">`);
 
-            printform.contentWindow.document.write(`<div style="padding: 15px;width: 45%;border: 1px solid black;border-radius:15px">`);
+            printform.contentWindow.document.write(`<div style="padding: 15px;width: 40%;border: 1px solid black;border-radius:15px">`);
             printform.contentWindow.document.write(`<div style="min-height: 1em;">SHIP TO</div>`);
             printform.contentWindow.document.write(`<div style="min-height: 1em;">${currentinvoice.shippingCompany}</div>`);
             printform.contentWindow.document.write(`<div style="min-height: 1em;">${currentinvoice.shippingAddress1}</div>`);
@@ -1185,7 +1185,7 @@ class ReportsPage extends React.Component {
             printform.contentWindow.document.write(`<div style="min-height: 1em;">${currentinvoice.shippingCity} ${currentinvoice.shippingState} ${currentinvoice.shippingZip}</div>`);
             printform.contentWindow.document.write(`</div>`);
             
-            printform.contentWindow.document.write(`<div style="padding: 15px;width: 45%;border: 1px solid black;border-radius:15px">`);
+            printform.contentWindow.document.write(`<div style="padding: 15px;width: 40%;border: 1px solid black;border-radius:15px">`);
             printform.contentWindow.document.write(`<div style="min-height: 1em;">BILL TO</div>`);
             printform.contentWindow.document.write(`<div style="min-height: 1em;">${currentinvoice.billingCompany}</div>`);
             printform.contentWindow.document.write(`<div style="min-height: 1em;">${currentinvoice.billingAddress1}</div>`);
@@ -1277,7 +1277,7 @@ class ReportsPage extends React.Component {
         return (
             <div>
                 <Header currentPage={2}/>
-                <iframe id="printform" style={{display: 'none', width: '100%'}}/>
+                <iframe id="printform" style={{display: 'block', width: '100%'}}/>
                 <div className="page" style={{fontSize: '1rem', borderTop: '2px solid #F4F1F4'}}>
                     <div className="row sub-header">
                         <div className={`sub-header-tab${currentTab === 0 ? '-active' : ''}`}

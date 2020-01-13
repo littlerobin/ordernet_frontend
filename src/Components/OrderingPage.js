@@ -102,7 +102,7 @@ class OrderingPage extends React.Component {
 
         orgProducts.forEach(function(orgOne){
             if (isReviewMode === true) {
-                if (quantum[orgOne.item] === undefined && quantum[orgOne.item] === 0);
+                if (quantum[orgOne.item] === undefined || quantum[orgOne.item] === 0);
                 else
                     products.push(orgOne);
             }
@@ -149,7 +149,7 @@ class OrderingPage extends React.Component {
                     value: JSON.stringify(code),
                 });
             })
-
+            cookie.set('ordernet_customer', JSON.stringify(data.userinfo));
             this.setState({customer: data.userinfo, orgProducts: data.products, productcodes: productcodes, isLoading: false});
         })
         .catch((err) => {
@@ -442,7 +442,7 @@ class OrderingPage extends React.Component {
                             </div>
                             <div className="row" style={{alignItems: "flex-start"}}>
                                 <div className="col-md-10">                                   
-                                        <table tabindex="0" ref={(input) => {this.tableRef = input}}
+                                        <table tabIndex="0" ref={(input) => {this.tableRef = input}}
                                             onKeyUp={e => {if (e.keyCode === 0x26 || e.keyCode === 0x28) this.onMoveSelectedRow(e.keyCode, products);}}
                                             className="order-table" style={{fontSize: '0.85rem', height: 600, display: 'block',
                                                 emptyCells: 'show'}}>

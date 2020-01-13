@@ -6,6 +6,7 @@ import Header from '../Layout/Header';
 import APIInfo from '../Constants/API';
 
 import './Page.css';
+import cookie from 'js-cookie';
 
 class AccountPage extends React.Component {
     constructor(props) {
@@ -13,29 +14,8 @@ class AccountPage extends React.Component {
         
         this.state = {
             isLoading: false,
-            customer:{}
+            customer: JSON.parse(cookie.get('ordernet_customer')),
         };
-    }
-
-    async componentWillMount() {
-        this.setState({isLoading: true});
-
-        axios({
-            method: 'post',
-            url: `${APIInfo.serverUrl}${APIInfo.apiContext}${APIInfo.version}${APIInfo.customer}`,
-            data: {
-                username: 'americ',
-                password: 'americ'
-            }
-        })
-        .then((response) => {
-            let data = response.data;
-            this.setState({customer: data.userinfo, isLoading: false});
-        })
-        .catch((err) => {
-            console.log(err);
-            this.setState({isLoading: false});
-        });
     }
 
     render() {

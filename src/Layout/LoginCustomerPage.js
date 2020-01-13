@@ -31,6 +31,7 @@ class LoginCustomerPage extends React.Component {
     async onConfirm(){
         const { username, password } = this.state;
         this.setState({isLoading: true});
+
         await axios({
             method: 'post',
             url: `${APIInfo.serverUrl}${APIInfo.apiContext}${APIInfo.version}${APIInfo.userInfo}`,
@@ -54,7 +55,7 @@ class LoginCustomerPage extends React.Component {
         const { isLoading, failed, passed } = this.state;
 
         if (passed === true) {
-            const { username, password, customerNumber } = this.state;
+            const { username, password, customerNumber, customer } = this.state;
             cookie.set('ordernet_username', username);
             cookie.set('ordernet_password', password);
             cookie.set('ordernet_customerNumber', customerNumber);
