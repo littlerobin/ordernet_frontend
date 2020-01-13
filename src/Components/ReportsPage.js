@@ -701,10 +701,10 @@ class ReportsPage extends React.Component {
                                         <div style={{textAlign: "center", border: "1px solid black", borderRadius: 10,
                                             width: '50%', padding: 10}}>
                                             <div style={{fontWeight:700, marginBottom: 5}}>BREAKDOWN</div>
-                                            Period1: <input type="text" style={{width: "10%"}} value={wholePage.state.period1} onChange={e => {wholePage.onPeriodChange(1, e)}}/>
-                                            Period2: <input type="text" style={{width: "10%"}} value={wholePage.state.period2} onChange={e => {wholePage.onPeriodChange(2, e)}}/>
-                                            Period3: <input type="text" style={{width: "10%"}} value={wholePage.state.period3} onChange={e => {wholePage.onPeriodChange(3, e)}}/>
-                                            Period4: <input type="text" style={{width: "10%"}} value={wholePage.state.period4} onChange={e => {wholePage.onPeriodChange(4, e)}}/>
+                                            Period1: <input type="text" style={{width: "10%"}} value={wholePage.state.period1} onChange={e => {wholePage.onPeriodChange(1, e)}}/>&nbsp;
+                                            Period2: <input type="text" style={{width: "10%"}} value={wholePage.state.period2} onChange={e => {wholePage.onPeriodChange(2, e)}}/>&nbsp;
+                                            Period3: <input type="text" style={{width: "10%"}} value={wholePage.state.period3} onChange={e => {wholePage.onPeriodChange(3, e)}}/>&nbsp;
+                                            Period4: <input type="text" style={{width: "10%"}} value={wholePage.state.period4} onChange={e => {wholePage.onPeriodChange(4, e)}}/>&nbsp;
                                         </div>
                                         <div>
                                             <div>
