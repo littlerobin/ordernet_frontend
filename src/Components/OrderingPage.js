@@ -21,6 +21,13 @@ class OrderingPage extends React.Component {
     constructor(props) {
         super(props);
 
+        let cookieInfo = cookie.get('orderinfo');
+        let previous = cookieInfo !==  undefined ? JSON.parse(cookieInfo) : {
+            quantum: {},
+            custPONum: '',
+            custComments: '',
+        };
+
         this.state = {
             isLoading: true,
             username: cookie.get('ordernet_username'),
@@ -41,14 +48,14 @@ class OrderingPage extends React.Component {
             currentQuantum: 0,
             currentRowItem: null,
 
-            quantum: {},
+            quantum: previous.quantum,
 
             orderID: '',
 
             isCommentEditing: false,
-            custComments: '',
+            custComments: previous.custComments,
 
-            custPONum: '',
+            custPONum: previous.custPONum,
 
             totalItems: 0,
             totalCost: 0,
@@ -66,27 +73,10 @@ class OrderingPage extends React.Component {
     }
 
     onSearchKeyChange(searchKey) {
-        /*let { isProfileItems, orgProducts } = this.state;
-        let products = [];
-        orgProducts.forEach(function(orgOne) {
-            if (isProfileItems !== true || orgOne.S === '*') {
-                if (orgOne.item.toUpperCase().match(searchKey.toUpperCase()) || orgOne.descrip.toUpperCase().match(searchKey.toUpperCase()))
-                    products.push(orgOne);
-            }
-        });
-        this.setState({products: products});*/
         this.setState({searchKey: searchKey});
     }
 
     onChangeIsProfile() {
-        /*let { isProfileItems, orgProducts } = this.state;
-        isProfileItems = !isProfileItems;
-        let products = [];
-        orgProducts.forEach(function(orgOne) {
-            if (isProfileItems !== true || orgOne.S === '*')
-                products.push(orgOne);
-        });
-        this.setState({products: products, isProfileItems: isProfileItems});*/
         this.setState({isProfileItems: !this.state.isProfileItems});
     }
 
@@ -143,8 +133,6 @@ class OrderingPage extends React.Component {
 
             codes.forEach(function(code) {
                 productcodes.push({
-                    /*key: code.TBLDESC + code.TBLCHAR,
-                    value: code.TBLDESC + code.TBLCHAR,*/
                     label: code.TBLDESC + code.TBLCHAR,
                     value: JSON.stringify(code),
                 });
@@ -161,6 +149,13 @@ class OrderingPage extends React.Component {
     }
 
     componentDidUpdate() {
+        const { quantum, custPONum, custComments } = this.state;
+
+        cookie.set("orderinfo", JSON.stringify({
+            quantum: quantum,
+            custPONum: custPONum,
+            custComments: custComments,
+        }));
 
         if (this.quantumRef !== null) {
             this.quantumRef.focus();
@@ -232,7 +227,7 @@ class OrderingPage extends React.Component {
         }
 
         this.setState({currentRowItem: newSelectedItem});
-        this.setState({curSelectedItem: null, currentQuantum: 0})
+        this.setState({curSelectedItem: null, currentQuantum: 0});
     }
 
     onSelectedRowChanged = (newSelectedItem) => {
@@ -276,7 +271,7 @@ class OrderingPage extends React.Component {
     completeOrder = () => {
         let { deliveryDate, quantum, orgProducts, username, password, custComments, custPONum } = this.state;
 
-        let product_info = [], totalPrice = 0;
+        let product_info = [], totalPrice = 0, totalItems = 0;
 
         orgProducts.map(product => {
             if (quantum[product.item] !== undefined && quantum[product.item] > 0) {
@@ -288,6 +283,7 @@ class OrderingPage extends React.Component {
                     'descrip': product.descrip,
                 });
                 totalPrice += quantum[product.item] * product.Price1;
+                totalItems += quantum[product.item];
             }
         });
 
@@ -307,7 +303,7 @@ class OrderingPage extends React.Component {
         })
         .then((res) => {
             let orderID = res.data.orderID;
-            this.setState({orderID: orderID, totalItems: product_info.length, totalCost: totalPrice, issubmit: false });
+            this.setState({orderID: orderID, totalItems: totalItems, totalCost: totalPrice, issubmit: false });
         })
         .catch((err) => {
             console.log(err);
@@ -321,6 +317,111 @@ class OrderingPage extends React.Component {
 
     custPONumChanged = e => {
         this.setState({custPONum: e.target.value})
+    }
+
+    printOrder = () => {
+        let { quantum, orgProducts, orderID, deliveryDate, custPONum, custComments, customer, totalCost, totalItems } = this.state;
+
+        let year = deliveryDate.getFullYear(), month = deliveryDate.getMonth() + 1, day = deliveryDate.getDate();
+
+        let printform = document.getElementById('printform');
+        
+        printform.contentWindow.document.write('<HTML style="-webkit-print-color-adjust: exact;"><head>');
+            printform.contentWindow.document.write(`<style>
+                    table, th, td {
+                        border: 1px solid gray;
+                        border-collapse: collapse;
+                        padding-left: 10px;
+                    }
+                </style>`);
+            printform.contentWindow.document.write('</head>');
+            printform.contentWindow.document.write('<body style="padding:20px;">');
+
+            printform.contentWindow.document.write(`<div style="width: 100%;display: flex">`);
+
+            printform.contentWindow.document.write(`<div style="width: 50%;">`);
+            printform.contentWindow.document.write(`<div>Order No. ${orderID}</div>`);
+            printform.contentWindow.document.write(`<div>Delivery Date: ${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}/${year}</div>`);
+            printform.contentWindow.document.write(`<div>PO No. ${custPONum}</div>`);
+            printform.contentWindow.document.write(`</div>`);
+
+            printform.contentWindow.document.write(`<div style="width: 50%;text-align:right;">`);
+            printform.contentWindow.document.write(`<div>Comment: ${custComments}</div>`);          
+            printform.contentWindow.document.write(`</div>`);
+
+            printform.contentWindow.document.write(`</div>`);
+
+            printform.contentWindow.document.write(`<div style="width: 100%;display:flex;justify-content:space-between;margin-top:15px">`);
+
+            printform.contentWindow.document.write(`<div style="padding: 15px;width: 45%;border: 1px solid black;border-radius:15px">`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">SHIP TO</div>`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">${customer.company}</div>`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">${customer.address1}</div>`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">${customer.address2}</div>`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">${customer.city} ${customer.state} ${customer.zip}</div>`);
+            printform.contentWindow.document.write(`</div>`);
+            
+            printform.contentWindow.document.write(`<div style="padding: 15px;width: 45%;border: 1px solid black;border-radius:15px">`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">BILL TO</div>`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">${customer.billingcompany}</div>`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">${customer.billingaddress1}</div>`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">${customer.billingaddress2}</div>`);
+            printform.contentWindow.document.write(`<div style="min-height: 1em;">${customer.billingcity} ${customer.billingstate} ${customer.billingzip}</div>`);
+            printform.contentWindow.document.write(`</div>`);
+
+            printform.contentWindow.document.write(`</div>`);
+
+            printform.contentWindow.document.write(`
+                    <table style="margin-top: 15px;width:100%;">
+                        <thead style="background: black; color: white;">
+                            <tr>
+                                <th>Qty</th>
+                                <th>Item</th>
+                                <th>Description</th>
+                                <th>U/M</th>
+                                <th>Price</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `);
+
+            orgProducts.map((product) => {
+                if (quantum[product.item] !== undefined && quantum[product.item] > 0) {
+                    console.log(product);
+
+                    printform.contentWindow.document.write(`
+                        <tr>
+                            <td>${quantum[product.item]}</td>
+                            <td>${product.item}</td>
+                            <td>${product.descrip}</td>
+                            <td></td>
+                            <td>${product.Price1}</td>
+                            <td>${quantum[product.item] * product.Price1}</td>
+                        </tr>
+                    `);
+                }
+            });
+
+
+            printform.contentWindow.document.write(`
+                <tr style="background-color:black;color:white;">
+                    <td>${totalItems}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Total: </td>
+                    <td>$${totalCost.toFixed(2)}</td>
+                </tr>
+            `);
+
+            printform.contentWindow.document.write('</tbody></table></body></html>');
+
+            printform.contentWindow.document.close();
+            printform.contentWindow.focus();
+
+            printform.contentWindow.print(); 
+            printform.contentWindow.close();
     }
 
     render() {
@@ -369,9 +470,15 @@ class OrderingPage extends React.Component {
 
                         return (<div>
                         <Header currentPage={0}/>
+                        <iframe id="printform" style={{display: 'none', width: '100%'}}/>
                         <div className="page">
                             {
-                                orderID === "" ? <div></div> : <div style={{color: 'red'}}>Thank you for your order.</div>
+                                orderID === "" ? <div></div> : <React.Fragment>
+                                    <input type="button" value="Print" onClick={() => {this.printOrder();}}/>
+                                    <span style={{color: 'red', marginLeft: 10}}>
+                                        Thank you for your order. Please print this page as your order confirmation
+                                    </span>
+                                </React.Fragment>
                             }
                             <div className="row margin-bottom-5" style={{alignItems: 'flex-start'}}>
                                 <div className="col-md-5">
@@ -465,7 +572,7 @@ class OrderingPage extends React.Component {
                                                         if (quantum[product.item] !== undefined && quantum[product.item] > 0)
                                                             totalPrice += quantum[product.item] * product.Price1;
                                                         else if (isReviewMode === true || orderID !== "")
-                                                            return (<tr></tr>);
+                                                            return "";
         
                                                         return (<tr className={curSelectedRow === product.item || (curSelectedRow === null && currentRowItem !== null && currentRowItem.item === product.item) ? 'selected-row'
                                                         : ((quantum[product.item] !== undefined && quantum[product.item] > 0) ? 'quanted-row' : '')}>
@@ -520,7 +627,7 @@ class OrderingPage extends React.Component {
                                                 <div style={{fontSize: "0.8rem", textAlign: 'left'}}>Enter comments here:</div>
                                                 <textarea style={{height: '10em', resize: 'none',
                                                     backgroundColor: '#F4F1F4', borderRadius: 5}}
-                                                    onChange={e => {this.commentChanged(e)}} onClick={() => {this.setState({isCommentEditing: true})}}/>
+                                                    onChange={e => {this.commentChanged(e)}} onClick={() => {this.onCurRowChanged(this.state.curSelectedItem)}}/>
                                             </div>
                                             <input type="button" style={{color: 'red', width: "100%", marginBottom: 5, color: colors.ClearButtonText, backgroundColor: colors.ClearButtonBack}} 
                                                 onClick={() => {this.clearEntireOrder()}} value="Clear Entire Order"/>
