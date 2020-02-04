@@ -59,6 +59,7 @@ class LoginCustomerPage extends React.Component {
             cookie.set('ordernet_username', username);
             cookie.set('ordernet_password', password);
             cookie.set('ordernet_customerNumber', customerNumber);
+            cookie.remove('orderinfo');
             return <Redirect to="/ordering"/>;
         }
 

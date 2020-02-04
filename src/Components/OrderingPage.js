@@ -583,7 +583,7 @@ class OrderingPage extends React.Component {
                                                                         value = {currentQuantum}
                                                                         onKeyUp={e => {if (e.keyCode === 13) { this.onMoveSelectedRow(0x28, products) }}}
                                                                         onChange={e => {e.preventDefault();e.stopPropagation(); this.onCurQuanChanged(e)}}/> : 
-                                                                        <div onClick={() => {this.onSelectedRowChanged(product)}}>
+                                                                        <div onClick={() => {orderID === "" ? this.onSelectedRowChanged(product) : this.onCurRowChanged(product)}}>
                                                                             {(quantum[product.item] !== undefined && quantum[product.item] > 0) ? quantum[product.item] : 0}
                                                                         </div>
                                                                 }
