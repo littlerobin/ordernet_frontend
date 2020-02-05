@@ -710,13 +710,15 @@ class ReportsPage extends React.Component {
                                             <div style={{fontWeight:700, marginBottom: 5}}>AGE FROM</div>
                                             <label>
                                                 <input type="radio" name="ageFrom" checked={wholePage.state.ageFrom === "due"}
+                                                    style={{verticalAlign: "middle"}}
                                                     onClick={() => {wholePage.setState({ageFrom: "due"})}}/>
-                                                Due Date
+                                                <span style={{verticalAlign: "middle"}}>Due Date</span>
                                             </label>
                                             <label style={{marginLeft: 10}}>
                                                 <input type="radio" name="ageFrom" checked={wholePage.state.ageFrom === "invoice"}
+                                                    style={{verticalAlign: "middle"}}
                                                     onClick={() => {wholePage.setState({ageFrom: "invoice"})}}/>
-                                                Invoice Date
+                                                <span style={{verticalAlign: "middle"}}>Invoice Date</span>
                                             </label>
                                         </div>
                                         <div style={{textAlign: "center", border: "1px solid black", borderRadius: 10,
@@ -766,13 +768,13 @@ class ReportsPage extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="row" style={{marginTop: 10, alignItems: 'flex-start'}}>
-                                                <table className="order-table col-md-10">
+                                                <table className="order-table col-md-10" style={{maxHeight: 600, overflowY: "scroll"}}>
                                                     <thead>
                                                         <tr>
-                                                            <th style={{width: '40%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Transaction Date</th>
-                                                            <th style={{width: '40%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Invoice No.</th>
-                                                            <th style={{width: '40%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Amount</th>
-                                                            <th style={{width: '40%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Balance</th>
+                                                            <th style={{width: '25%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Transaction Date</th>
+                                                            <th style={{width: '25%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Invoice No.</th>
+                                                            <th style={{width: '25%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Amount</th>
+                                                            <th style={{width: '25%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Balance</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -784,8 +786,8 @@ class ReportsPage extends React.Component {
                                                                     }} className={curStatementInvoiceNumber === invoice.invoiceNumber ? 'selected-row' : ''}>
                                                                     <td>{`${invdte.getMonth() + 1}/${invdte.getDate()}/${invdte.getFullYear()}`}</td>
                                                                     <td>{invoice.invoiceNumber}</td>
-                                                                    <td>{invoice.invoiceAmount}</td>
-                                                                    <td>{invoice.invoiceBalance}</td>
+                                                                    <td>${invoice.invoiceAmount < 0 ? `(${invoice.invoiceAmount.toFixed(2)})` : invoice.invoiceAmount.toFixed(2)}</td>
+                                                                    <td>${invoice.invoiceBalance < 0 ? `(${invoice.invoiceBalance.toFixed(2)})` : invoice.invoiceBalance.toFixed(2)}</td>
                                                                 </tr>);
                                                             })
                                                         }

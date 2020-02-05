@@ -473,12 +473,12 @@ class OrderingPage extends React.Component {
                         <iframe id="printform" style={{display: 'none', width: '100%'}}/>
                         <div className="page">
                             {
-                                orderID === "" ? <div></div> : <React.Fragment>
+                                orderID === "" ? <div></div> : <div style={{marginBottom: 10}}>
                                     <input type="button" value="Print" onClick={() => {this.printOrder();}}/>
                                     <span style={{color: 'red', marginLeft: 10}}>
                                         Thank you for your order. Please print this page as your order confirmation
                                     </span>
-                                </React.Fragment>
+                                </div>
                             }
                             <div className="row margin-bottom-5" style={{alignItems: 'flex-start'}}>
                                 <div className="col-md-5">
@@ -534,7 +534,7 @@ class OrderingPage extends React.Component {
                                                 />
                                             </div>
                                             <div className="col-md-2">
-                                                <input type="text" style={{maxWidth: '100%'}} onChange={(e) => {this.onPONumChanged(e);}}/>
+                                                <input type="text" style={{maxWidth: '100%'}} value={custPONum} onChange={(e) => {this.onPONumChanged(e);}}/>
                                             </div>
                                             <div className="col-md-3">
                                                 <input type="text" style={{maxWidth: '100%'}} onChange={(e) => {this.onSearchKeyChange(e.target.value);}}/>
@@ -627,6 +627,7 @@ class OrderingPage extends React.Component {
                                                 <div style={{fontSize: "0.8rem", textAlign: 'left'}}>Enter comments here:</div>
                                                 <textarea style={{height: '10em', resize: 'none',
                                                     backgroundColor: '#F4F1F4', borderRadius: 5}}
+                                                    value={custComments}
                                                     onChange={e => {this.commentChanged(e)}} onClick={() => {this.onCurRowChanged(this.state.curSelectedItem)}}/>
                                             </div>
                                             <input type="button" style={{color: 'red', width: "100%", marginBottom: 5, color: colors.ClearButtonText, backgroundColor: colors.ClearButtonBack}} 
@@ -656,7 +657,9 @@ class OrderingPage extends React.Component {
                                         </div>
                                         <input type="button" style={{border: '1px solid gray', fontSize: "0.85rem",
                                             backgroundColor: '#F4F1F4', textAlign: 'center', marginTop: 15}}
-                                            onClick={() => {this.setState({
+                                            onClick={() => {
+                                                cookie.remove('orderinfo');
+                                                this.setState({
                                                 curSelectedItem: null,
                                                 currentQuantum: 0,
     

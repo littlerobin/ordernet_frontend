@@ -152,6 +152,11 @@ tr:hover {
     line-height: 1em;
 }
 
+.Dropdown-option {
+    padding-top: 1px !important;
+    padding-bottom: 2px !important;
+}
+
 .calendar-width-fix {
     width: 100%;
 }
