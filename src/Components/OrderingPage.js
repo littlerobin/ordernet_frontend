@@ -411,7 +411,7 @@ class OrderingPage extends React.Component {
                     <td></td>
                     <td></td>
                     <td>Total: </td>
-                    <td>$${totalCost.toFixed(2)}</td>
+                    <td>${totalCost.toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</td>
                 </tr>
             `);
 
@@ -591,9 +591,9 @@ class OrderingPage extends React.Component {
                                                             <td onClick={() => {this.onCurRowChanged(product)}}>{product.size}</td>
                                                             <td onClick={() => {this.onCurRowChanged(product)}}>{product.Pack}</td>
                                                             <td onClick={() => {this.onCurRowChanged(product)}}>{product.descrip}</td>
-                                                            <td onClick={() => {this.onCurRowChanged(product)}}>${parseFloat(product.Price1).toFixed(2)}</td>
-                                                            <td onClick={() => {this.onCurRowChanged(product)}}>${quantum[product.item] !== undefined
-                                                                ? (quantum[product.item] * parseFloat(product.Price1)).toFixed(2) : "0.00"}</td>
+                                                            <td onClick={() => {this.onCurRowChanged(product)}}>{parseFloat(product.Price1).toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</td>
+                                                            <td onClick={() => {this.onCurRowChanged(product)}}>{(quantum[product.item] !== undefined
+                                                                ? (quantum[product.item] * parseFloat(product.Price1)) : 0).toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</td>
                                                             <td onClick={() => {this.onCurRowChanged(product)}}>{product.item}</td>
                                                             <td onClick={() => {this.onCurRowChanged(product)}}>{product.Category}</td>
                                                             <td onClick={() => {this.onCurRowChanged(product)}}>{product.S}</td>
@@ -608,7 +608,7 @@ class OrderingPage extends React.Component {
                                             <div className="col-md-12" style={{borderRadius: 5, border: '0.5px solid gray',
                                                 fontWeight: 700, marginBottom: 10, textAlign: 'center',
                                                 color: colors.OrderTotalText, backgroundColor: colors.OrderTotalBack}}>
-                                                ORDER TOTAL<br/>${totalPrice.toFixed(2)}
+                                                ORDER TOTAL<br/>{totalPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD'})}
                                             </div>
                                             <div className="col-md-12" style={{textAlign: 'left', padding: 0, display: isReviewMode ? 'none' : 'block'}}>
                                                 <label onClick={() => {this.onChangeIsProfile();}}>
@@ -637,7 +637,7 @@ class OrderingPage extends React.Component {
                                                 currentRowItem === null ? (<div></div>) : (<div style={{lineHeight: '3em'}}>
                                                     <div>{currentRowItem.item}</div>
                                                     <div>{currentRowItem.descrip}</div>
-                                                    <div>PRICE ${parseFloat(currentRowItem.Price1).toFixed(2)}</div>
+                                                    <div>PRICE {parseFloat(currentRowItem.Price1).toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</div>
                                                     <div>QUANTITY {quantum[currentRowItem.item] === undefined ? 0 : quantum[currentRowItem.item]}</div>
                                                 </div>)
                                             }
@@ -649,7 +649,7 @@ class OrderingPage extends React.Component {
                                         </div>
                                         <div style={{border: '1px solid black', borderRadius: 5, marginTop: 15, fontSize: "0.85rem"}}>
                                             TOTAL COST<br/>
-                                            ${totalCost.toFixed(2)}
+                                            {totalCost.toLocaleString('en-US', { style: 'currency', currency: 'USD'})}
                                         </div>
                                         <div style={{border: '1px solid black', borderRadius: 5, padding: 5, marginTop: 15, minHeight: "4em", fontSize: "0.85rem"}}>
                                             COMMENTS<br/>
