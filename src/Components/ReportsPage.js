@@ -484,7 +484,7 @@ class ReportsPage extends React.Component {
                                                 onChange = {wholePage.handleFromSummaryChanged}
                                                 className = "date-picker"
                                             />
-                                            <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.fromDateRef.setOpen(true);}}/>
+                                            <img src="assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.fromDateRef.setOpen(true);}}/>
                                         </div>
                                         <div style={{marginRight: '5px'}}>
                                             To&nbsp;
@@ -495,7 +495,7 @@ class ReportsPage extends React.Component {
                                                 onChange = {wholePage.handleToSummaryChanged}
                                                 className = "date-picker"
                                             />
-                                            <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.toDateRef.setOpen(true);}}/>
+                                            <img src="assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.toDateRef.setOpen(true);}}/>
                                         </div>
                                         <input type="button" value="SHOW INVOICE SUMMARY" onClick={() => {wholePage.getInvoiceSummary()}}/>
                                         {
@@ -600,7 +600,7 @@ class ReportsPage extends React.Component {
                                                 
                                                 className = "date-picker"
                                             />
-                                            <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.fromDateRef.setOpen(true);}}/>
+                                            <img src="assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.fromDateRef.setOpen(true);}}/>
                                         </div>
                                         <div style={{marginRight: '5px'}}>
                                             To&nbsp;
@@ -612,7 +612,7 @@ class ReportsPage extends React.Component {
                                                 
                                                 className = "date-picker"
                                             />
-                                            <img src="/assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.toDateRef.setOpen(true);}}/>
+                                            <img src="assets/calendar.png" style={{width:20, height:20}} onClick={() => {wholePage.toDateRef.setOpen(true);}}/>
                                         </div>
                                         <input type="button" value="SHOW INVOICES WITH DETAILS" onClick={() => {wholePage.getDetailInvoice()}}/>
                                         {/*<div className="show-statement" style={{textAlign: 'center', marginTop: 20, marginBottom: 20,
