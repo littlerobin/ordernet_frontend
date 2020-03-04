@@ -23,10 +23,18 @@ class OrderingPage extends React.Component {
 
         let cookieInfo = cookie.get('orderinfo');
         let previous = cookieInfo !==  undefined ? JSON.parse(cookieInfo) : {
+            orderID: '',
             quantum: {},
             custPONum: '',
             custComments: '',
         };
+
+        if (previous.orderID !== "") {
+            previous.quantum = {};
+            previous.orderID = "";
+            previous.custPONum = "";
+            previous.custComments = "";
+        }
 
         this.state = {
             isLoading: true,
@@ -50,7 +58,7 @@ class OrderingPage extends React.Component {
 
             quantum: previous.quantum,
 
-            orderID: '',
+            orderID: previous.orderID,
 
             isCommentEditing: false,
             custComments: previous.custComments,
@@ -149,9 +157,10 @@ class OrderingPage extends React.Component {
     }
 
     componentDidUpdate() {
-        const { quantum, custPONum, custComments } = this.state;
+        const { orderID, quantum, custPONum, custComments } = this.state;
 
         cookie.set("orderinfo", JSON.stringify({
+            orderID: orderID,
             quantum: quantum,
             custPONum: custPONum,
             custComments: custComments,
@@ -534,10 +543,14 @@ class OrderingPage extends React.Component {
                                                 />
                                             </div>
                                             <div className="col-md-2">
-                                                <input type="text" style={{maxWidth: '100%'}} value={custPONum} onChange={(e) => {this.onPONumChanged(e);}}/>
+                                                <input type="text" style={{maxWidth: '100%'}} value={custPONum}
+                                                    onClick={() => {this.onCurRowChanged(this.state.curSelectedItem)}}
+                                                    onChange={(e) => {this.onPONumChanged(e);}}/>
                                             </div>
                                             <div className="col-md-3">
-                                                <input type="text" style={{maxWidth: '100%'}} onChange={(e) => {this.onSearchKeyChange(e.target.value);}}/>
+                                                <input type="text" style={{maxWidth: '100%'}}
+                                                    onClick={() => {this.onCurRowChanged(this.state.curSelectedItem)}}
+                                                    onChange={(e) => {this.onSearchKeyChange(e.target.value);}}/>
                                             </div>
                                             <div className="col-md-3">
                                                 <Dropdown onChange={newVal => this.onProductCodeChange(newVal)} 
