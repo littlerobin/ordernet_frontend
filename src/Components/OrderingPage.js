@@ -562,7 +562,7 @@ class OrderingPage extends React.Component {
                                             <div className="col-md-2">
                                                 <DatePicker
                                                     ref = {component => {this.deliveryDateRef = component;}}
-                                                    selected = {this.state.deliveryDate}
+                                                    selected = {deliveryDate}
                                                     onChange = {this.handleDevelieryDateChanged}
                                                     minDate = {new Date()}
                                                     className = "calendar-width-fix"
