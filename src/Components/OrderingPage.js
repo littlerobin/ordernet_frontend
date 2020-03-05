@@ -69,6 +69,7 @@ class OrderingPage extends React.Component {
             totalCost: 0,
 
             issubmit: false,
+            profileItemsSettings: false,
         }
 
         this.initializeData = this.initializeData.bind(this);
@@ -151,6 +152,27 @@ class OrderingPage extends React.Component {
         .catch((err) => {
             console.log(err);
         });
+
+        await axios({
+            method: 'get',
+            url: `${APIInfo.serverUrl}${APIInfo.apiContext}${APIInfo.version}${APIInfo.getColors}`,
+          }).then((res) => {
+              let colorData = res.data.colors;
+              let colors = {};
+              colorData.map(item => {
+                  colors[item.ID.trim()] = item.COLOR;
+              })
+              colors = JSON.parse(JSON.stringify(colors));
+
+              const today = new Date();
+              const tomorrow = new Date(today);
+              tomorrow.setDate(tomorrow.getDate() + 1);
+
+              this.setState({
+                  deliveryDate: colors.NexDayDeliveryDate === "YES" ? tomorrow : today,
+                  profileItemsSettings: colors.PROFILEITEMS === "NO" ? false : true,
+              });
+          });
     }
 
     componentDidMount() {
@@ -305,8 +327,8 @@ class OrderingPage extends React.Component {
                 products: product_info,
                 username: username,
                 password: password,
-                custComments: custComments,
-                custPONum: custPONum,
+                comments: custComments,
+                ponum: custPONum,
                 shipDate: `${deliveryDate.getFullYear()}-${deliveryDate.getMonth() + 1}-${deliveryDate.getDate()}`,
             }
         })
@@ -448,7 +470,7 @@ class OrderingPage extends React.Component {
         let products = this.applySearchFilter();
         
         let { isProfileItems, deliveryDate, orderID, customer, productcodes, quantum, filterCode, issubmit, currentRowItem,
-            currentQuantum, curSelectedItem, isReviewMode, custPONum, totalCost, totalItems, custComments } = this.state;
+            currentQuantum, curSelectedItem, isReviewMode, custPONum, totalCost, totalItems, custComments, profileItemsSettings } = this.state;
         let totalPrice = 0;
         let curSelectedRow = null;
         if (curSelectedItem !== null)
@@ -476,6 +498,10 @@ class OrderingPage extends React.Component {
                         let red = parseInt(back.substr(1, 2), 16);
                         let green = parseInt(back.substr(3, 2), 16);
                         let blue = parseInt(back.substr(5, 2), 16);
+
+                        let isItemSelected = Object.keys(quantum).some(key => {
+                            return quantum[key] > 0;
+                        })
 
                         return (<div>
                         <Header currentPage={0}/>
@@ -588,7 +614,8 @@ class OrderingPage extends React.Component {
                                                             return "";
         
                                                         return (<tr className={curSelectedRow === product.item || (curSelectedRow === null && currentRowItem !== null && currentRowItem.item === product.item) ? 'selected-row'
-                                                        : ((quantum[product.item] !== undefined && quantum[product.item] > 0) ? 'quanted-row' : '')}>
+                                                        : ((quantum[product.item] !== undefined && quantum[product.item] > 0) ? 'quanted-row' : '')}
+                                                            style={{backgroundColor: index % 2 === 1 ? "white" : colors.OrderTotalBack}}>
                                                             <td>
                                                                 {
                                                                     product.item === curSelectedRow ? <input ref={(input) => {this.quantumRef = input}}
@@ -623,19 +650,26 @@ class OrderingPage extends React.Component {
                                                 color: colors.OrderTotalText, backgroundColor: colors.OrderTotalBack}}>
                                                 ORDER TOTAL<br/>{totalPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD'})}
                                             </div>
-                                            <div className="col-md-12" style={{textAlign: 'left', padding: 0, display: isReviewMode ? 'none' : 'block'}}>
+                                            <div className="col-md-12" style={{textAlign: 'left', padding: 0, display: (profileItemsSettings === false || isReviewMode) ? 'none' : 'block'}}>
                                                 <label onClick={() => {this.onChangeIsProfile();}}>
                                                     {
-                                                        isProfileItems === false ? <input type="checkbox" /> : <input type="checkbox" checked readOnly/>
+                                                        (isProfileItems === false ? <input type="checkbox" /> : <input type="checkbox" checked readOnly/>)
                                                     }
                                                     PROFILE ITEMS
                                                 </label>
                                             </div>
-                                            <input type="button" style={{width: "100%", marginBottom: 5, color: colors.ReviewButtonText, backgroundColor: colors.ReviewButtonBack}} 
+                                            {
+                                                isItemSelected === true ? <input type="button" style={{width: "100%", marginBottom: 5, color: colors.ReviewButtonText, backgroundColor: colors.ReviewButtonBack}} 
                                                 onClick={() => {this.setState({isReviewMode: !isReviewMode})}}
-                                                value={ isReviewMode === false ? 'Review Order' : 'Continue Ordering'}/>
-                                            <input type="button" style={{color: 'red', width: "100%", marginBottom: 5, color: colors.CompleteButtonText, backgroundColor: colors.CompleteButtonBack}} 
-                                                onClick={() => {this.completeOrder()}} value="Complete Order"/>
+                                                value={ isReviewMode === false ? 'Review Order' : 'Continue Ordering'}/> : <input type="button" style={{width: "100%", marginBottom: 5, color: colors.ReviewButtonText, backgroundColor: colors.ReviewButtonBack}} 
+                                                onClick={() => {this.setState({isReviewMode: !isReviewMode})}}
+                                                value={ isReviewMode === false ? 'Review Order' : 'Continue Ordering'} disabled/>
+                                            }
+                                            {
+                                                isItemSelected === true ? <input type="button" style={{color: 'red', width: "100%", marginBottom: 5, color: colors.CompleteButtonText, backgroundColor: colors.CompleteButtonBack}} 
+                                                onClick={() => {this.completeOrder()}} value="Complete Order"/> : <input type="button" style={{color: 'red', width: "100%", marginBottom: 5, color: colors.CompleteButtonText, backgroundColor: colors.CompleteButtonBack}} 
+                                                onClick={() => {this.completeOrder()}} value="Complete Order" disabled/>
+                                            }
                                             <div className="col-md-12" style={{padding: 0}}>
                                                 <div style={{fontSize: "0.8rem", textAlign: 'left'}}>Enter comments here:</div>
                                                 <textarea style={{height: '10em', resize: 'none',
@@ -643,8 +677,11 @@ class OrderingPage extends React.Component {
                                                     value={custComments}
                                                     onChange={e => {this.commentChanged(e)}} onClick={() => {this.onCurRowChanged(this.state.curSelectedItem)}}/>
                                             </div>
-                                            <input type="button" style={{color: 'red', width: "100%", marginBottom: 5, color: colors.ClearButtonText, backgroundColor: colors.ClearButtonBack}} 
-                                                onClick={() => {this.clearEntireOrder()}} value="Clear Entire Order"/>
+                                            {
+                                                isItemSelected === true ? <input type="button" style={{color: 'red', width: "100%", marginBottom: 5, color: colors.ClearButtonText, backgroundColor: colors.ClearButtonBack}} 
+                                                onClick={() => {this.clearEntireOrder()}} value="Clear Entire Order"/> : <input type="button" style={{color: 'red', width: "100%", marginBottom: 5, color: colors.ClearButtonText, backgroundColor: colors.ClearButtonBack}} 
+                                                onClick={() => {this.clearEntireOrder()}} value="Clear Entire Order" disabled/>
+                                            }
                                         <div style={{fontSize: '0.75rem', width: '100%', minHeight: '150px', backgroundColor: '#B58A00', color: '#FFFFFF', borderRadius: 10, textAlign: 'center'}}>
                                             {
                                                 currentRowItem === null ? (<div></div>) : (<div style={{lineHeight: '3em'}}>
