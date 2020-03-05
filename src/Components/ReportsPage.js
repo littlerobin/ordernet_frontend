@@ -385,8 +385,8 @@ class ReportsPage extends React.Component {
                                                             </thead>
                                                             <tbody>
                                                                 {
-                                                                    currentinvoice.products.map(product => {
-                                                                        return (<tr>
+                                                                    currentinvoice.products.map((product, index) => {
+                                                                        return (<tr style={{backgroundColor: index % 2 === 1 ? "white" : colors.OrderTotalBack}}>
                                                                             <td>{product.quantity}</td>
                                                                             <td>{product.item}</td>
                                                                             <td>{product.description}</td>
@@ -524,9 +524,10 @@ class ReportsPage extends React.Component {
                                                 </thead>
                                                 <tbody>
                                                     {
-                                                        summary.invoices.map(invoice => {
+                                                        summary.invoices.map((invoice, index) => {
                                                             let invdte = new Date(invoice.invoiceDate);
                                                             return (<tr onClick={() => {wholePage.setState({curSummaryInvioceNumber: invoice.invoiceNumber})}}
+                                                            style={{backgroundColor: index % 2 === 1 ? "white" : colors.OrderTotalBack}}
                                                             className={curSummaryInvioceNumber === invoice.invoiceNumber ? 'selected-row' : ''}>
                                                                 <td>{invoice.invoiceNumber}</td>
                                                                 <td>{invoice.orderNumber}</td>
@@ -779,11 +780,12 @@ class ReportsPage extends React.Component {
                                                     </thead>
                                                     <tbody>
                                                         {
-                                                            statement.invoices.map(invoice => {
+                                                            statement.invoices.map((invoice, index) => {
                                                                 let invdte = new Date(invoice.invoiceDate);
                                                                 return (<tr onClick={() => {
                                                                         wholePage.setState({curStatementInvoiceNumber: invoice.invoiceNumber})
-                                                                    }} className={curStatementInvoiceNumber === invoice.invoiceNumber ? 'selected-row' : ''}>
+                                                                    }} className={curStatementInvoiceNumber === invoice.invoiceNumber ? 'selected-row' : ''}
+                                                                    style={{backgroundColor: index % 2 === 1 ? "white" : colors.OrderTotalBack}}>
                                                                     <td>{`${invdte.getMonth() + 1}/${invdte.getDate()}/${invdte.getFullYear()}`}</td>
                                                                     <td>{invoice.invoiceNumber}</td>
                                                                     <td>{invoice.invoiceAmount < 0 ? `(${invoice.invoiceAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD'})})`
