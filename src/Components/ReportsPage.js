@@ -323,13 +323,13 @@ class ReportsPage extends React.Component {
                             return (
                                 <div>
                                     <div className="" style={{width: "100%", marginLeft: 0, marginBottom: 15, display: "inline-flex", alignItems: "center"}}>
-                                        <div style={{width: "35%"}}>
+                                        <div style={{width: "40%"}}>
                                             <Dropdown options={invoicelist} value={currentinvno} placeholder='Select Invoice'
                                                 onChange={newInv => {wholePage.onCurrentInvoiceChange(newInv.value);}}/>
                                         </div>
                                         <span style={{width: '5%', textAlign: 'center', marginLeft: 5, marginRight: 5}}>OR</span>
                                         <input type="text" placeholder="Enter Invoice Number"
-                                            ref={inputItem => {wholePage.currentInvInputRef = inputItem}} style={{width:'35%', marginRight: 10}}/>
+                                            ref={inputItem => {wholePage.currentInvInputRef = inputItem}} style={{width:'30%', marginRight: 10}}/>
                                         <input type="button" value="GO" onClick={() => {wholePage.onFindCurrentInvoice()}}/>
                                         {
                                             currentinvoice !== null && <input type="button" style={{marginLeft: 25}} value="PRINT INVOICE" onClick={() => {printCurrentInvoice()}}/>
@@ -391,7 +391,7 @@ class ReportsPage extends React.Component {
                                                                             <td>{product.item}</td>
                                                                             <td>{product.description}</td>
                                                                             <td></td>
-                                                                            <td>{product.price1.toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</td>
+                                                                            <td>{(product.price1 * 1).toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</td>
                                                                             <td>{(product.quantity * product.price1).toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</td>
                                                                         </tr>);
                                                                     })
@@ -510,16 +510,16 @@ class ReportsPage extends React.Component {
                                     </div>
                                     {
                                         (summary === null || summary.invoices.length === 0) ? (<div></div>) : (<div className="row" style={{alignItems: 'end', marginTop: 15}}>
-                                            <table className="order-table col-md-10" style={{height: 600, display: 'block', padding: 0, fontSize: "0.85rem"}}>
+                                            <table className="order-table col-md-10" style={{height: 600, padding: 0, fontSize: "0.85rem"}}>
                                                 <thead>
                                                     <tr>
                                                         <th style={{width: '10%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Invoice #</th>
                                                         <th style={{width: '10%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Order #</th>
-                                                        <th style={{width: '20%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Invoice Date</th>
+                                                        <th style={{width: '15%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Invoice Date</th>
                                                         <th style={{width: '15%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Customer #</th>
                                                         <th style={{width: '20%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Ship To</th>
                                                         <th style={{width: '20%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Invoice Total</th>
-                                                        <th style={{width: '20%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Sales Tax</th>
+                                                        <th style={{width: '10%', background: `-webkit-linear-gradient(-90deg,  rgba(${red}, ${green}, ${blue}, 1) 0%, rgba(${red - 15}, ${green - 15}, ${blue - 15}, 1) 50%, rgba(${red - 30}, ${green - 30}, ${blue - 30}, 1) 100%)`}}>Sales Tax</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -534,8 +534,8 @@ class ReportsPage extends React.Component {
                                                                 <td>{`${invdte.getMonth() + 1}/${invdte.getDate()}/${invdte.getFullYear()}`}</td>
                                                                 <td>{invoice.customerNumber}</td>
                                                                 <td>{invoice.shippingCompany}</td>
-                                                                <td>{invoice.invoiceAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</td>
-                                                                <td>{invoice.tax.toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</td>
+                                                                <td>{(invoice.invoiceAmount * 1).toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</td>
+                                                                <td>{(invoice.tax * 1).toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</td>
                                                             </tr>);
                                                         })
                                                     }
@@ -666,7 +666,7 @@ class ReportsPage extends React.Component {
                                                                             return (<tr>
                                                                                 <td style={{border: '1px solid gray'}}>{product.item}</td>
                                                                                 <td style={{border: '1px solid gray'}}>{product.description}</td>
-                                                                                <td style={{border: '1px solid gray'}}>{product.price1.toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</td>
+                                                                                <td style={{border: '1px solid gray'}}>{(product.price1 * 1).toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</td>
                                                                                 <td style={{border: '1px solid gray'}}>{product.quantity}</td>
                                                                                 <td style={{border: '1px solid gray'}}>{(product.price1 * product.quantity).toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</td>
                                                                             </tr>)
@@ -675,7 +675,7 @@ class ReportsPage extends React.Component {
                                                                 </tbody>
                                                             </table>
                                                             <div style={{fontWeight: 700, textAlign: 'right', paddingRight: 40, color: 'white'}}>
-                                                                TOTAL {invoice.invoiceAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD'})}
+                                                                TOTAL {(invoice.invoiceAmount * 1).toLocaleString('en-US', { style: 'currency', currency: 'USD'})}
                                                             </div>
                                                         </div>)
                                                     })
@@ -788,10 +788,10 @@ class ReportsPage extends React.Component {
                                                                     style={{backgroundColor: index % 2 === 1 ? "white" : colors.OrderTotalBack}}>
                                                                     <td>{`${invdte.getMonth() + 1}/${invdte.getDate()}/${invdte.getFullYear()}`}</td>
                                                                     <td>{invoice.invoiceNumber}</td>
-                                                                    <td>{invoice.invoiceAmount < 0 ? `(${invoice.invoiceAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD'})})`
-                                                                        : invoice.invoiceAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</td>
-                                                                    <td>{invoice.invoiceBalance < 0 ? `(${invoice.invoiceBalance.toLocaleString('en-US', { style: 'currency', currency: 'USD'})})`
-                                                                        : invoice.invoiceBalance.toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</td>
+                                                                    <td>{invoice.invoiceAmount < 0 ? `(${(invoice.invoiceAmount * 1).toLocaleString('en-US', { style: 'currency', currency: 'USD'})})`
+                                                                        : (invoice.invoiceAmount * 1).toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</td>
+                                                                    <td>{invoice.invoiceBalance < 0 ? `(${(invoice.invoiceBalance * 1).toLocaleString('en-US', { style: 'currency', currency: 'USD'})})`
+                                                                        : (invoice.invoiceBalance * 1).toLocaleString('en-US', { style: 'currency', currency: 'USD'})}</td>
                                                                 </tr>);
                                                             })
                                                         }
@@ -801,31 +801,31 @@ class ReportsPage extends React.Component {
                                                     <div className="">
                                                         <div style={{backgroundColor: '#90001C', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
                                                             CURRENT DUE<br/>
-                                                            {statement.currentDue.toLocaleString('en-US', { style: 'currency', currency: 'USD'})}
+                                                            {(statement.currentDue * 1).toLocaleString('en-US', { style: 'currency', currency: 'USD'})}
                                                         </div>
                                                     </div>
                                                     <div className="">
                                                         <div style={{backgroundColor: '#0000A5', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
                                                             OVER {wholePage.state.period1}<br/>
-                                                            {statement.period1Due.toLocaleString('en-US', { style: 'currency', currency: 'USD'})}
+                                                            {(statement.period1Due * 1).toLocaleString('en-US', { style: 'currency', currency: 'USD'})}
                                                         </div>
                                                     </div>
                                                     <div className="">
                                                         <div style={{backgroundColor: '#0041C6', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
                                                             OVER {wholePage.state.period2}<br/>
-                                                            {statement.period2Due.toLocaleString('en-US', { style: 'currency', currency: 'USD'})}
+                                                            {(statement.period2Due * 1).toLocaleString('en-US', { style: 'currency', currency: 'USD'})}
                                                         </div>
                                                     </div>
                                                     <div className="">
                                                         <div style={{backgroundColor: '#3680CE', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
                                                             OVER {wholePage.state.period3}<br/>
-                                                            {statement.period3Due.toLocaleString('en-US', { style: 'currency', currency: 'USD'})}
+                                                            {(statement.period3Due * 1).toLocaleString('en-US', { style: 'currency', currency: 'USD'})}
                                                         </div>
                                                     </div>
                                                     <div className="">
                                                         <div style={{backgroundColor: '#669FCE', borderRadius: 10, border: '1px solid black', marginBottom: 10}}>
                                                             OVER {wholePage.state.period4}<br/>
-                                                            {statement.period4Due.toLocaleString('en-US', { style: 'currency', currency: 'USD'})}
+                                                            {(statement.period4Due * 1).toLocaleString('en-US', { style: 'currency', currency: 'USD'})}
                                                         </div>
                                                     </div>
                                                     <div className="">
