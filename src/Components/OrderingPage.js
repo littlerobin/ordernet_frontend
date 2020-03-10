@@ -189,6 +189,13 @@ class OrderingPage extends React.Component {
         }));
 
         if (this.quantumRef !== null) {
+            /*let selRange = this.quantumRef.createTextRange();
+            selRange.collapse(true);
+            selRange.moveStart("character", 0);
+            selRange.moveEnd("character", currentQuantum.toString().length - 1);
+            selRange.select();*/
+            /*onClick="this.setSelectionRange(0, this.value.length)"*/
+            this.quantumRef.setSelectionRange(0, this.quantumRef.value.length);
             this.quantumRef.focus();
         }
     }
@@ -207,8 +214,9 @@ class OrderingPage extends React.Component {
                 products.map((product, index) => {
                     if (product.item === curSelectedItem.item) {
                         if (index === 0)
-                            return;
-                        this.onSelectedRowChanged(products[index - 1]);
+                            this.onSelectedRowChanged(products[products.length - 1]);
+                        else
+                            this.onSelectedRowChanged(products[index - 1]);
                         return;
                     }
                 });
@@ -217,8 +225,9 @@ class OrderingPage extends React.Component {
                 products.map((product, index) => {
                     if (product.item === currentRowItem.item) {
                         if (index === 0)
-                            return;
-                        this.onCurRowChanged(products[index - 1]);
+                            this.onCurRowChanged(products[products.length - 1]);
+                        else
+                            this.onCurRowChanged(products[index - 1]);
                         return;
                     }
                 });
@@ -230,8 +239,9 @@ class OrderingPage extends React.Component {
                 products.map((product, index) => {
                     if (product.item === curSelectedItem.item) {
                         if (index === products.length - 1)
-                            return;
-                        this.onSelectedRowChanged(products[index + 1]);
+                            this.onSelectedRowChanged(products[0]);
+                        else
+                            this.onSelectedRowChanged(products[index + 1]);
                         return;
                     }
                 });
@@ -239,9 +249,10 @@ class OrderingPage extends React.Component {
             else if (currentRowItem !== null) {
                 products.map((product, index) => {
                     if (product.item === currentRowItem.item) {
-                        if (index === products.length + 1)
-                            return;
-                        this.onCurRowChanged(products[index + 1]);
+                        if (index === products.length - 1)
+                            this.onCurRowChanged(products[0]);
+                        else
+                            this.onCurRowChanged(products[index + 1]);
                         return;
                     }
                 });
@@ -310,7 +321,7 @@ class OrderingPage extends React.Component {
                     'quantity': quantum[product.item],
                     'item': product.item,
                     'price1': product.Price1,
-                    'upccode': product.Category,
+                    'upccode': product.upccode,
                     'descrip': product.descrip,
                 });
                 totalPrice += quantum[product.item] * product.Price1;
@@ -570,12 +581,12 @@ class OrderingPage extends React.Component {
                                             </div>
                                             <div className="col-md-2">
                                                 <input type="text" style={{maxWidth: '100%'}} value={custPONum}
-                                                    onClick={() => {this.onCurRowChanged(this.state.curSelectedItem)}}
+                                                    /*onClick={() => {this.onCurRowChanged(this.state.curSelectedItem)}}*/
                                                     onChange={(e) => {this.onPONumChanged(e);}}/>
                                             </div>
                                             <div className="col-md-3">
                                                 <input type="text" style={{maxWidth: '100%'}}
-                                                    onClick={() => {this.onCurRowChanged(this.state.curSelectedItem)}}
+                                                    /*onClick={() => {this.onCurRowChanged(this.state.curSelectedItem)}}*/
                                                     onChange={(e) => {this.onSearchKeyChange(e.target.value);}}/>
                                             </div>
                                             <div className="col-md-3">
@@ -619,6 +630,8 @@ class OrderingPage extends React.Component {
                                                             <td>
                                                                 {
                                                                     product.item === curSelectedRow ? <input ref={(input) => {this.quantumRef = input}}
+                                                                        id = "QuantumInput"
+                                                                        onBlur={() => {this.onCurRowChanged(this.state.curSelectedItem)}}
                                                                         type="text" style={{width: '100%'}}
                                                                         value = {currentQuantum}
                                                                         onKeyUp={e => {if (e.keyCode === 13) { this.onMoveSelectedRow(0x28, products) }}}
@@ -675,7 +688,7 @@ class OrderingPage extends React.Component {
                                                 <textarea style={{height: '10em', resize: 'none',
                                                     backgroundColor: '#F4F1F4', borderRadius: 5}}
                                                     value={custComments}
-                                                    onChange={e => {this.commentChanged(e)}} onClick={() => {this.onCurRowChanged(this.state.curSelectedItem)}}/>
+                                                    onChange={e => {this.commentChanged(e)}} /*onClick={() => {this.onCurRowChanged(this.state.curSelectedItem)}}*//>
                                             </div>
                                             {
                                                 isItemSelected === true ? <input type="button" style={{color: 'red', width: "100%", marginBottom: 5, color: colors.ClearButtonText, backgroundColor: colors.ClearButtonBack}} 
